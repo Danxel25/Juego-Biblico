@@ -2,12 +2,29 @@ import { Injectable, signal, inject, computed } from '@angular/core';
 import { WeeklyEvent, EventProgress } from '../models/event.model';
 import { AuthService } from './auth.service';
 
+function getEndOfWeek(): Date {
+  const now = new Date();
+  // getDay() returns 0 for Sunday, 1 for Monday, etc.
+  const currentDay = now.getDay();
+  // We want the week to end on Sunday.
+  // If today is Monday (1), we need to add 6 days.
+  // If today is Sunday (0), we need to add 0 days.
+  const daysUntilSunday = currentDay === 0 ? 0 : 7 - currentDay;
+  
+  const endOfWeek = new Date(now);
+  endOfWeek.setDate(now.getDate() + daysUntilSunday);
+  // Set time to 23:59:59.999 on that Sunday
+  endOfWeek.setHours(23, 59, 59, 999);
+  
+  return endOfWeek;
+}
+
 const ACTIVE_EVENT: WeeklyEvent = {
   id: 'prophets-trial-1',
   title: 'La Prueba del Profeta',
   description: 'Los grandes reyes de Israel te desafían. Demuestra tu conocimiento sobre sus vidas y legados en este evento especial. ¡Consigue 10 respuestas correctas para ganar grandes recompensas!',
   themeCategory: 'Reyes - David', // Usaremos una categoría existente para las preguntas
-  endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 días desde ahora
+  endDate: getEndOfWeek().toISOString(), // Ends on the next Sunday at midnight
   goal: 10,
   rewards: {
     xp: 250,
@@ -64,17 +81,23 @@ export class EventService {
   
   recordCorrectAnswer(category: string): void {
     const event = this.activeEvent();
-    if (!event || event.themeCategory !== category || this.isGoalReached()) {
+    if (!event || event.themeCategory !== category) {
       return;
     }
     
-    let progress = this.userProgress();
-    if (!progress || progress.eventId !== event.id) {
-      progress = { eventId: event.id, score: 0, rewardClaimed: false };
+    const currentProgress = this.userProgress();
+    
+    // Do not increment score if goal is already reached.
+    if (currentProgress && currentProgress.score >= event.goal) {
+        return;
     }
     
-    progress.score += 1;
-    this.saveProgress(progress);
+    const progressToUpdate = currentProgress && currentProgress.eventId === event.id 
+      ? currentProgress 
+      : { eventId: event.id, score: 0, rewardClaimed: false };
+      
+    const newProgress = { ...progressToUpdate, score: progressToUpdate.score + 1 };
+    this.saveProgress(newProgress);
   }
 
   async claimReward(): Promise<boolean> {
