@@ -28,6 +28,7 @@ export class EventComponent implements OnInit, OnDestroy {
 
   timeLeft = signal<TimeLeft | null>(null);
   notification = signal<string | null>(null);
+  isClaiming = signal(false);
   private timerInterval: any;
   
   progressPercentage = computed(() => {
@@ -73,12 +74,17 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   async claim(): Promise<void> {
+    if (this.isClaiming()) return;
+    this.isClaiming.set(true);
+
     const success = await this.eventService.claimReward();
     if (success) {
       this.showNotification('¡Recompensas reclamadas con éxito!');
     } else {
       this.showNotification('No se pudieron reclamar las recompensas.');
     }
+
+    this.isClaiming.set(false);
   }
 
   private showNotification(message: string): void {

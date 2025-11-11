@@ -87,8 +87,8 @@ export class EventService {
       await this.authService.incrementUserStats(event.rewards);
       const progress = this.userProgress();
       if(progress) {
-        progress.rewardClaimed = true;
-        this.saveProgress(progress);
+        const newProgress = { ...progress, rewardClaimed: true };
+        this.saveProgress(newProgress);
       }
       return true;
     } catch (error) {

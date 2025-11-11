@@ -4,8 +4,8 @@
 -- #                                                                           #
 -- #############################################################################
 --
--- Instrucciones:
--- 1. Ve al "SQL Editor" en tu proyecto de Supabase.
+-- 1. Ve al "-- Instrucciones:
+SQL Editor" en tu proyecto de Supabase.
 -- 2. Haz clic en "+ New query".
 -- 3. Copia TODO el contenido de este archivo.
 -- 4. Pégalo en el editor de SQL.
@@ -187,14 +187,38 @@ $$ language plpgsql security definer;
 
 
 -- --- Función para incrementar estadísticas del usuario ---
--- Se elimina la función existente para permitir el cambio de nombre del parámetro 'mana_inc' a 'fe_inc'.
+-- Se actualiza para incluir lógica de subida de nivel.
 drop function if exists increment_user_stats(uuid, integer, integer, integer);
 create or replace function increment_user_stats(user_id uuid, xp_inc integer, fe_inc integer, talents_inc integer)
 returns void as $$
+declare
+  current_level integer;
+  current_xp integer;
+  required_xp integer;
+  new_total_xp integer;
 begin
+  -- Obtener estadísticas actuales del usuario
+  select level, xp into current_level, current_xp from public.users where uid = user_id;
+
+  -- Calcular el nuevo total de XP
+  new_total_xp := current_xp + xp_inc;
+  required_xp := current_level * 1000;
+
+  -- Bucle para manejar múltiples subidas de nivel con una gran ganancia de XP
+  while new_total_xp >= required_xp loop
+    -- Subir de nivel
+    current_level := current_level + 1;
+    -- Restar el XP necesario para subir de nivel, manteniendo el resto
+    new_total_xp := new_total_xp - required_xp;
+    -- Calcular el XP requerido para el nuevo nivel
+    required_xp := current_level * 1000;
+  end loop;
+
+  -- Actualizar las estadísticas del usuario
   update public.users
   set
-    xp = xp + xp_inc,
+    level = current_level,
+    xp = new_total_xp,
     fe = fe + fe_inc,
     talents = talents + talents_inc
   where uid = user_id;

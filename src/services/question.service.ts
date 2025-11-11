@@ -46,6 +46,13 @@ export class QuestionService {
     { id: 301, text: '¿Quién era el gigante filisteo que David derrotó?', options: ['Og', 'Sihón', 'Goliat', 'Anac'], correctAnswer: 'Goliat', verse: '1 Samuel 17:4', category: 'Reyes - David' },
     { id: 302, text: '¿Cuál era el instrumento musical que David tocaba para el rey Saúl?', options: ['Flauta', 'Lira', 'Arpa', 'Tambor'], correctAnswer: 'Arpa', verse: '1 Samuel 16:23', category: 'Reyes - David' },
     { id: 303, text: '¿Qué ciudad estableció David como la capital de Israel?', options: ['Hebrón', 'Jericó', 'Samaria', 'Jerusalén'], correctAnswer: 'Jerusalén', verse: '2 Samuel 5:6-7', category: 'Reyes - David' },
+    { id: 304, text: '¿Quién fue el mejor amigo de David e hijo del rey Saúl?', options: ['Abner', 'Joab', 'Jonatán', 'Is-boset'], correctAnswer: 'Jonatán', verse: '1 Samuel 18:1', category: 'Reyes - David' },
+    { id: 305, text: '¿Con qué mujer cometió adulterio David?', options: ['Abigail', 'Mical', 'Betsabé', 'Ahinoam'], correctAnswer: 'Betsabé', verse: '2 Samuel 11:4', category: 'Reyes - David' },
+    { id: 306, text: '¿Qué profeta confrontó a David por su pecado con Betsabé?', options: ['Elías', 'Natán', 'Samuel', 'Gad'], correctAnswer: 'Natán', verse: '2 Samuel 12:1', category: 'Reyes - David' },
+    { id: 307, text: '¿Cuál de los hijos de David se rebeló contra él e intentó tomar el trono?', options: ['Salomón', 'Absalón', 'Amnón', 'Adonías'], correctAnswer: 'Absalón', verse: '2 Samuel 15', category: 'Reyes - David' },
+    { id: 308, text: '¿Qué material acumuló David en abundancia para la construcción del Templo que edificaría su hijo?', options: ['Madera de cedro', 'Lino fino', 'Piedras preciosas', 'Oro, plata y bronce'], correctAnswer: 'Oro, plata y bronce', verse: '1 Crónicas 22:14', category: 'Reyes - David' },
+    { id: 309, text: '¿A qué ciudad huyó David cuando Absalón se apoderó de Jerusalén?', options: ['Hebrón', 'Gat', 'Mahanaim', 'Jericó'], correctAnswer: 'Mahanaim', verse: '2 Samuel 17:24', category: 'Reyes - David' },
+    { id: 310, text: '¿Qué salmo famoso escribió David expresando su arrepentimiento después de su pecado con Betsabé?', options: ['Salmo 23', 'Salmo 91', 'Salmo 1', 'Salmo 51'], correctAnswer: 'Salmo 51', verse: 'Salmo 51 (título)', category: 'Reyes - David' },
   ];
 
   constructor() {}

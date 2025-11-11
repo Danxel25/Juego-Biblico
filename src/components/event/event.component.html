@@ -80,8 +80,12 @@
             <span>Recompensa Reclamada</span>
           </button>
         } @else if (isGoalReached()) {
-          <button (click)="claim()" class="w-full px-8 py-4 bg-amber-500 text-white font-bold text-xl rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200 active:scale-95 transform hover:-translate-y-1">
-            ¡Reclamar Recompensa!
+          <button (click)="claim()" [disabled]="isClaiming()" class="w-full px-8 py-4 bg-amber-500 text-white font-bold text-xl rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200 active:scale-95 transform hover:-translate-y-1 disabled:bg-amber-400 disabled:cursor-wait">
+            @if(isClaiming()) {
+              <span>Reclamando...</span>
+            } @else {
+              <span>¡Reclamar Recompensa!</span>
+            }
           </button>
         } @else {
            <button (click)="participate()" class="w-full px-8 py-4 bg-teal-600 text-white font-bold text-xl rounded-lg shadow-md hover:bg-teal-700 transition-all duration-200 active:scale-95 transform hover:-translate-y-1">

@@ -233,12 +233,24 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
     
     await this.dataService.incrementUserStats(user.uid, stats);
 
-    // Update local signal for instant feedback
+    // Update local signal for instant feedback, including leveling logic
     this.currentUser.update(currentUser => {
         if (!currentUser) return null;
+        
+        let newXp = (currentUser.xp || 0) + (stats.xp || 0);
+        let newLevel = currentUser.level;
+        let requiredXp = newLevel * 1000;
+
+        while (newXp >= requiredXp) {
+            newXp -= requiredXp;
+            newLevel++;
+            requiredXp = newLevel * 1000;
+        }
+
         return {
             ...currentUser,
-            xp: (currentUser.xp || 0) + (stats.xp || 0),
+            level: newLevel,
+            xp: newXp,
             fe: (currentUser.fe || 0) + (stats.fe || 0),
             talents: (currentUser.talents || 0) + (stats.talents || 0),
             duelsWon: (currentUser.duelsWon || 0) + (stats.duels_won || 0),
