@@ -1,0 +1,117 @@
+<nav class="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm shadow-[0_-2px_5px_rgba(0,0,0,0.05)] border-t border-slate-200 z-40">
+  <div class="flex justify-around items-center h-16">
+    <a routerLink="/main-menu" 
+       routerLinkActive="active-nav-item" 
+       [routerLinkActiveOptions]="{exact: true}"
+       (click)="onNavClick('/main-menu')"
+       class="nav-item">
+      <span class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        @if(lastClicked() === '/main-menu'){
+          <span class="feedback-icon">✨</span>
+        }
+      </span>
+      <span class="nav-text">Inicio</span>
+    </a>
+    <a routerLink="/campaign" 
+       routerLinkActive="active-nav-item"
+       (click)="onNavClick('/campaign')"
+       class="nav-item">
+      <span class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 10h6" />
+        </svg>
+        @if(lastClicked() === '/campaign'){
+          <span class="feedback-icon">✨</span>
+        }
+      </span>
+      <span class="nav-text">Campaña</span>
+    </a>
+    <a routerLink="/duel" 
+       routerLinkActive="active-nav-item"
+       (click)="onNavClick('/duel')"
+       class="nav-item">
+      <span class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-5.197-5.975" /></svg>
+        @if(lastClicked() === '/duel'){
+          <span class="feedback-icon">✨</span>
+        }
+      </span>
+      <span class="nav-text">Duelo</span>
+    </a>
+    <a routerLink="/quick-challenge" 
+       routerLinkActive="active-nav-item"
+       (click)="onNavClick('/quick-challenge')"
+       class="nav-item">
+       <span class="relative">
+         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+         @if(lastClicked() === '/quick-challenge'){
+          <span class="feedback-icon">✨</span>
+        }
+       </span>
+      <span class="nav-text">Desafío</span>
+    </a>
+    <a routerLink="/profile" 
+       routerLinkActive="active-nav-item"
+       (click)="onNavClick('/profile')"
+       class="nav-item">
+      <span class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        @if(lastClicked() === '/profile'){
+          <span class="feedback-icon">✨</span>
+        }
+      </span>
+      <span class="nav-text">Perfil</span>
+    </a>
+  </div>
+</nav>
+
+<style>
+  .nav-item {
+    @apply flex flex-col items-center justify-center text-slate-500 transition-all duration-200;
+  }
+  .nav-item:active {
+    @apply transform scale-90;
+  }
+  .nav-text {
+    @apply text-xs font-medium transition-all duration-200;
+  }
+  .active-nav-item {
+    @apply text-teal-600;
+  }
+  .active-nav-item .nav-text {
+    @apply font-bold;
+  }
+  .active-nav-item svg {
+    @apply transform scale-110;
+  }
+  .feedback-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 1.5rem; /* 24px */
+    animation: pop-up-fade 0.6s ease-out forwards;
+    pointer-events: none; /* So it doesn't interfere with clicks */
+  }
+
+  @keyframes pop-up-fade {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -150%) scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -250%) scale(0.8);
+    }
+  }
+</style>

@@ -1,0 +1,71 @@
+<div class="max-w-3xl mx-auto text-slate-800">
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold font-cinzel text-teal-700">Clasificaciones Globales</h1>
+    <p class="mt-2 text-slate-600">Compara tu progreso con el de la comunidad. Actualizado cada 2 minutos.</p>
+  </div>
+  
+  <!-- Tabs -->
+  <div class="mb-6 border-b border-slate-200">
+    <nav class="flex flex-wrap -mb-px -mx-2 sm:-mx-4" aria-label="Tabs">
+      @for (tab of tabs; track tab.key) {
+        <button (click)="setActiveTab(tab.key)"
+                class="flex items-center gap-2 whitespace-nowrap px-3 py-3 font-semibold border-b-2 text-sm sm:text-base"
+                [class.border-teal-500]="activeTab() === tab.key"
+                [class.text-teal-600]="activeTab() === tab.key"
+                [class.border-transparent]="activeTab() !== tab.key"
+                [class.text-slate-500]="activeTab() !== tab.key"
+                [class.hover:text-slate-700]="activeTab() !== tab.key"
+                [class.hover:border-slate-300]="activeTab() !== tab.key">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="tab.icon" />
+            </svg>
+          <span>{{ tab.name }}</span>
+        </button>
+      }
+    </nav>
+  </div>
+  
+  <!-- Leaderboard Content -->
+  <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 min-h-[400px]">
+    @if(isLoading()) {
+      <div class="flex items-center justify-center h-full min-h-[300px]">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600"></div>
+      </div>
+    } @else {
+      @if (currentLeaderboard() && currentLeaderboard()!.length > 0) {
+        <ul class="space-y-2">
+          @for(user of currentLeaderboard(); track user.uid; let i = $index) {
+            <li class="flex items-center p-3 rounded-lg transition-colors"
+                [class.bg-teal-50]="user.uid === currentUser()?.uid"
+                [class.border-teal-200]="user.uid === currentUser()?.uid"
+                [class.border]="user.uid === currentUser()?.uid">
+              <div class="w-8 text-center text-lg font-bold" [class.text-amber-500]="i < 3">{{ i + 1 }}</div>
+              <img [src]="user.avatarUrl" [alt]="user.customName" class="w-12 h-12 rounded-full mx-4 border-2 border-white shadow">
+              <div class="flex-grow">
+                <p class="font-bold text-slate-800">{{ user.customName }}</p>
+                <p class="text-sm text-slate-500">{{ user.title }}</p>
+              </div>
+              <div class="text-lg font-bold text-teal-700">{{ getScore(user) }}</div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="flex items-center justify-center h-full min-h-[300px] text-center text-slate-500">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <p class="mt-2 font-semibold">No hay datos disponibles.</p>
+            <p>Aún no hay clasificaciones para esta categoría.</p>
+          </div>
+        </div>
+      }
+    }
+    
+    @if(lastUpdated(); as updatedDate) {
+      <p class="text-xs text-slate-400 text-right mt-4">
+        Última actualización: {{ updatedDate | date:'shortTime' }}
+      </p>
+    }
+  </div>
+</div>

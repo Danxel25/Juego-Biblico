@@ -1,0 +1,142 @@
+<div class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+  <div class="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md border border-slate-200">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold font-cinzel text-teal-700">Cruzada Celestial</h1>
+      <p class="mt-2 text-slate-600">
+        @if (isLoginView()) {
+          Inicia sesión para continuar tu viaje.
+        } @else {
+          Crea tu cuenta y comienza tu desafío.
+        }
+      </p>
+    </div>
+
+    @if(errorMessage(); as error) {
+      <div class="p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-lg">
+        <p>{{ error }}</p>
+      </div>
+    }
+
+    <!-- Login Form -->
+    @if (isLoginView()) {
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-medium text-slate-700">Correo Electrónico</label>
+          <input id="email" type="email" autocomplete="email" required formControlName="email"
+                 class="w-full px-3 py-2 mt-1 text-slate-800 bg-slate-50 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-700">Contraseña</label>
+          <input id="password" type="password" autocomplete="current-password" required formControlName="password"
+                 class="w-full px-3 py-2 mt-1 text-slate-800 bg-slate-50 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+        </div>
+
+        <div class="flex items-center justify-end">
+          <div class="text-sm">
+            <a href="#" class="font-medium text-teal-600 hover:text-teal-500">¿Olvidaste tu contraseña?</a>
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" [disabled]="isLoading() || loginForm.invalid"
+                  class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 active:scale-95 disabled:bg-teal-400 disabled:cursor-not-allowed">
+            @if(isLoading()){
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Procesando...</span>
+            } @else {
+              <span>Iniciar Sesión</span>
+            }
+          </button>
+        </div>
+      </form>
+    } @else {
+      <!-- Register Form -->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div>
+          <label for="reg-email" class="block text-sm font-medium text-slate-700">Correo Electrónico</label>
+          <input id="reg-email" type="email" autocomplete="email" required formControlName="email"
+                 class="w-full px-3 py-2 mt-1 text-slate-800 bg-slate-50 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+        </div>
+        
+        <div>
+          <label for="custom-name" class="block text-sm font-medium text-slate-700">Elige tu Apodo Bíblico</label>
+          <div class="flex items-center mt-1">
+            <input id="custom-name" type="text" required formControlName="customName"
+                   class="w-full px-3 py-2 text-slate-800 bg-slate-50 border border-slate-300 rounded-l-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+            <button type="button" (click)="generateRandomName()" [disabled]="isLoading()" class="p-2 bg-teal-500 text-white rounded-r-md hover:bg-teal-600 transition-all duration-200 active:scale-90 disabled:bg-teal-400" aria-label="Generar nombre aleatorio">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M5.46 13a9 9 0 112.54-6.58L4 10" /></svg>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label for="reg-password" class="block text-sm font-medium text-slate-700">Contraseña</label>
+          <input id="reg-password" type="password" required formControlName="password"
+                 class="w-full px-3 py-2 mt-1 text-slate-800 bg-slate-50 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+        </div>
+        
+        <div>
+          <label for="reg-confirm-password" class="block text-sm font-medium text-slate-700">Confirmar Contraseña</label>
+          <input id="reg-confirm-password" type="password" required formControlName="confirmPassword"
+                 class="w-full px-3 py-2 mt-1 text-slate-800 bg-slate-50 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 disabled:bg-slate-200">
+          @if(registerForm.controls['confirmPassword'].touched && registerForm.hasError('passwordMismatch')) {
+            <p class="text-xs text-red-600 mt-1">Las contraseñas no coinciden.</p>
+          }
+        </div>
+
+        <div>
+          <button type="submit" [disabled]="isLoading() || registerForm.invalid"
+                  class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 active:scale-95 disabled:bg-teal-400 disabled:cursor-not-allowed">
+             @if(isLoading()){
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Creando cuenta...</span>
+            } @else {
+              <span>Crear Cuenta</span>
+            }
+          </button>
+        </div>
+      </form>
+    }
+
+    <div class="relative">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-slate-300"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="px-2 bg-white text-slate-500">O continúa con</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+       <button [disabled]="isLoading()" class="w-full inline-flex justify-center py-2 px-4 border border-slate-300 rounded-md shadow-sm bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 transition-all duration-200 active:scale-95 disabled:opacity-50">
+        Google
+      </button>
+      <button [disabled]="isLoading()" class="w-full inline-flex justify-center py-2 px-4 border border-slate-300 rounded-md shadow-sm bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 transition-all duration-200 active:scale-95 disabled:opacity-50">
+        Apple
+      </button>
+    </div>
+    
+     <div class="text-center text-sm">
+       <button (click)="onGuestLogin()" [disabled]="isLoading()" class="font-medium text-teal-600 hover:text-teal-500 disabled:text-teal-400 disabled:cursor-not-allowed">
+         Probar como invitado
+       </button>
+     </div>
+
+    <p class="text-center text-sm">
+      <button (click)="toggleView()" [disabled]="isLoading()" class="font-medium text-teal-600 hover:text-teal-500 disabled:text-teal-400">
+        @if (isLoginView()) {
+          ¿No tienes una cuenta? Regístrate
+        } @else {
+          ¿Ya tienes una cuenta? Inicia sesión
+        }
+      </button>
+    </p>
+  </div>
+</div>

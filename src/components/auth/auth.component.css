@@ -1,0 +1,5 @@
+/* Oculta el icono de calendario por defecto en navegadores WebKit (Chrome, Safari) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}

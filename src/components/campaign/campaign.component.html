@@ -1,0 +1,110 @@
+<div class="max-w-3xl mx-auto p-4 sm:p-6 text-slate-800">
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold font-cinzel text-teal-700">Viaje a Través de las Escrituras</h1>
+    <p class="mt-2 text-slate-600">Estudia la Biblia capítulo por capítulo, comenzando con el libro de Génesis.</p>
+  </div>
+
+  @if (genesisBook(); as book) {
+    <div class="space-y-8">
+      @for (stage of book.stages; track stage.title) {
+        <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200">
+          <h2 class="text-3xl font-bold font-cinzel text-slate-800 border-b border-slate-200 pb-4 mb-4">{{ stage.title }}</h2>
+          <p class="text-slate-600 mb-6 -mt-2">{{ stage.description }}</p>
+
+          <div class="space-y-3">
+            @for (chapter of stage.chapters; track chapter.id) {
+              @let unlocked = isChapterUnlocked(chapter.id);
+              @let completed = isChapterCompleted(chapter);
+              @let progress = getChapterProgress(chapter);
+              @let totalActivities = getTotalActivitiesCount(chapter);
+              @let completedActivities = getCompletedActivitiesCount(chapter);
+
+              <a [routerLink]="unlocked ? ['/campaign/book', book.id, 'chapter', chapter.id] : null"
+                 class="block p-4 rounded-lg border-2 transition-all duration-300"
+                 [class.border-slate-200]="!unlocked && !completed"
+                 [class.bg-slate-50]="!unlocked && !completed"
+                 [class.text-slate-400]="!unlocked && !completed"
+                 [class.cursor-not-allowed]="!unlocked"
+                 [class.border-teal-500]="unlocked && !completed && !chapter.isTestChapter"
+                 [class.bg-white]="unlocked && !completed"
+                 [class.hover:bg-teal-50]="unlocked && !completed"
+                 [class.hover:shadow-lg]="unlocked && !completed"
+                 [class.hover:-translate-y-0.5]="unlocked && !completed"
+                 [class.border-amber-500]="unlocked && !completed && chapter.isTestChapter"
+                 [class.bg-amber-50]="unlocked && !completed && chapter.isTestChapter"
+                 [class.hover:bg-amber-100]="unlocked && !completed && chapter.isTestChapter"
+                 [class.border-green-500]="completed"
+                 [class.bg-green-50]="completed">
+
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-lg font-bold font-cinzel"
+                          [class.text-slate-800]="unlocked || completed"
+                          [class.text-slate-500]="!unlocked">
+                        @if(chapter.isTestChapter) {
+                          <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 -mt-1 mr-1 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        }
+                        {{ chapter.title }}
+                      </h3>
+                    </div>
+                    <p class="text-sm mt-1"
+                       [class.text-slate-600]="unlocked || completed"
+                       [class.text-slate-400]="!unlocked">{{ chapter.description }}</p>
+                    
+                    <!-- Detailed Progress -->
+                    @if (unlocked) {
+                      <div class="mt-3">
+                        @if (completed) {
+                          <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <span class="font-semibold text-sm text-green-700">Completado</span>
+                          </div>
+                        } @else if (totalActivities > 0) {
+                          <div>
+                            <p class="text-xs font-semibold text-slate-600 mb-1">Progreso: {{ completedActivities }} / {{ totalActivities }}</p>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 shadow-inner">
+                              <div class="bg-gradient-to-r from-teal-400 to-emerald-500 h-2.5 rounded-full transition-all duration-500"
+                                   [style.width.%]="progress"></div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <div class="mt-3">
+                         <span class="text-xs font-semibold text-slate-400">{{ totalActivities }} Actividades</span>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div class="ml-4 flex-shrink-0">
+                    @if (completed) {
+                      <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                    } @else if (unlocked) {
+                      <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                      </div>
+                    } @else {
+                      <div class="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+              </a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

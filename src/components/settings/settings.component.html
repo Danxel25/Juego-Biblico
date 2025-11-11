@@ -1,0 +1,60 @@
+<div class="max-w-xl mx-auto p-4 sm:p-0">
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold font-cinzel text-teal-700">Ajustes</h1>
+    <p class="mt-2 text-slate-600">Personaliza tu experiencia de juego.</p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Game Settings -->
+    <div class="p-5 bg-white rounded-lg shadow-md border border-slate-200">
+      <h2 class="text-xl font-bold font-cinzel text-slate-800 border-b border-slate-200 pb-2 mb-4">Juego</h2>
+      <ul class="space-y-3">
+        <li class="flex justify-between items-center">
+          <span class="font-semibold text-slate-700">Efectos de Sonido</span>
+          <label class="switch">
+            <input type="checkbox" [checked]="soundEffects()" (change)="updateSoundEffects($event)">
+            <span class="slider round"></span>
+          </label>
+        </li>
+        <li class="flex justify-between items-center">
+          <span class="font-semibold text-slate-700">Música</span>
+          <label class="switch">
+            <input type="checkbox" [checked]="music()" (change)="updateMusic($event)">
+            <span class="slider round"></span>
+          </label>
+        </li>
+        <li class="flex justify-between items-center">
+          <span class="font-semibold text-slate-700">Notificaciones</span>
+          <label class="switch">
+            <input type="checkbox" [checked]="notifications()" (change)="updateNotifications($event)">
+            <span class="slider round"></span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Account Settings -->
+    <div class="p-5 bg-white rounded-lg shadow-md border border-slate-200">
+      <h2 class="text-xl font-bold font-cinzel text-slate-800 border-b border-slate-200 pb-2 mb-4">Cuenta</h2>
+      @if (user(); as currentUser) {
+        <div class="flex justify-between items-center mb-4">
+          <span class="font-semibold text-slate-700">Correo Electrónico</span>
+          <span class="text-slate-600">{{ currentUser.email }}</span>
+        </div>
+      }
+      <button (click)="logout()" class="w-full text-center px-4 py-2 bg-red-600 text-white font-bold rounded-lg shadow-sm hover:bg-red-700 transition-all duration-200 active:scale-95">
+        Cerrar Sesión
+      </button>
+    </div>
+
+    <!-- Support Settings -->
+    <div class="p-5 bg-white rounded-lg shadow-md border border-slate-200">
+      <h2 class="text-xl font-bold font-cinzel text-slate-800 border-b border-slate-200 pb-2 mb-4">Soporte</h2>
+      <ul class="space-y-2">
+        <li><a href="#" class="block text-teal-600 hover:underline">Centro de Ayuda</a></li>
+        <li><a href="#" class="block text-teal-600 hover:underline">Política de Privacidad</a></li>
+        <li><a href="#" class="block text-teal-600 hover:underline">Términos de Servicio</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

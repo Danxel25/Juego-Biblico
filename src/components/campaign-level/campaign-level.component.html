@@ -1,0 +1,127 @@
+<div class="max-w-3xl mx-auto p-4 sm:p-6 text-slate-800">
+  @if (chapter(); as currentChapter) {
+
+    <!-- Loading State -->
+    @if (gameState() === 'loading') {
+      <div class="text-center py-10">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600 mx-auto"></div>
+        <p class="mt-4 text-lg text-slate-600">Cargando capítulo...</p>
+      </div>
+    }
+
+    <!-- Playing State -->
+    @if (gameState() === 'playing' && currentActivity(); as activity) {
+      <div class="bg-white rounded-lg shadow-md border border-slate-200 p-6">
+        <!-- Header -->
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold font-cinzel text-teal-700">{{ currentChapter.title }}</h1>
+          <p class="text-slate-500">Actividad {{ currentActivityIndex() + 1 }} de {{ currentChapter.activities.length }}</p>
+        </div>
+
+        <!-- Activity Content -->
+        @switch (activity.type) {
+          @case ('pregunta_profunda') {
+            <div class="p-6 bg-slate-50 rounded-lg border border-slate-200">
+              <p class="text-2xl font-semibold my-4 text-center">{{ activity.questionText }}</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+              @for (option of activity.options || []; track option) {
+                <button (click)="selectAnswer(option)" class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98] bg-white border-slate-300 hover:bg-teal-50 hover:border-teal-400">
+                  {{ option }}
+                </button>
+              }
+            </div>
+          }
+          @case ('completar_versiculo') {
+            <div class="p-6 bg-slate-50 rounded-lg border border-slate-200">
+              <p class="text-2xl font-semibold my-4 text-center italic">"{{ activity.questionText }}"</p>
+            </div>
+             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+              @for (option of activity.options || []; track option) {
+                <button (click)="selectAnswer(option)" class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98] bg-white border-slate-300 hover:bg-teal-50 hover:border-teal-400">
+                  {{ option }}
+                </button>
+              }
+            </div>
+          }
+          @case ('orden_cronologico') {
+            <div class="p-6 bg-slate-50 rounded-lg border border-slate-200">
+              <p class="text-2xl font-semibold my-4 text-center">{{ activity.questionText }}</p>
+            </div>
+            <div class="mt-4 text-center text-slate-600"><p>(Función de ordenar no implementada en esta versión)</p></div>
+          }
+          @case ('arbol_genealogico') {
+            <div class="p-6 bg-slate-50 rounded-lg border border-slate-200">
+              <p class="text-2xl font-semibold my-4 text-center">{{ activity.questionText }}</p>
+            </div>
+            <div class="mt-4 text-center text-slate-600"><p>(Función de conectar no implementada en esta versión)</p></div>
+          }
+        }
+      </div>
+    }
+
+    <!-- Feedback / Deep Study Modal -->
+    @if (gameState() === 'feedback') {
+      <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+          <div class="p-6">
+            @if(answerStatus() === 'correct') {
+              <h2 class="text-3xl font-bold font-cinzel text-green-600">¡Respuesta Correcta!</h2>
+            } @else {
+              <h2 class="text-3xl font-bold font-cinzel text-red-600">Respuesta Incorrecta</h2>
+              <p class="text-slate-600 mt-1">La respuesta correcta era: <span class="font-bold">{{ currentActivity()?.correctAnswer }}</span></p>
+            }
+
+            <div class="mt-4 p-4 bg-slate-50 border-t border-b border-slate-200">
+              <h3 class="font-bold text-lg font-cinzel text-slate-700">Estudio Profundo</h3>
+              <p class="font-semibold text-teal-700 italic mt-1">{{ currentActivity()?.verse }}</p>
+              @if(isLoadingDeepStudy()){
+                <div class="flex flex-col items-center justify-center min-h-[150px]">
+                  <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600"></div>
+                  <p class="mt-4 text-slate-600">Generando análisis...</p>
+                </div>
+              } @else {
+                <div class="prose max-w-none text-slate-800 mt-2 whitespace-pre-wrap">{{ deepStudyContent() }}</div>
+              }
+            </div>
+            
+            <div class="mt-6 text-right">
+              <button (click)="nextActivity()" [disabled]="isLoadingDeepStudy()" class="px-8 py-3 bg-teal-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-teal-700 transition-all active:scale-95 disabled:bg-teal-400">
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Finished State -->
+    @if (gameState() === 'finished') {
+       <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-8 text-center">
+            <h2 class="text-4xl font-bold font-cinzel text-green-600">¡Capítulo Completado!</h2>
+            <p class="mt-4 text-slate-600">Has finalizado todas las actividades de "{{ currentChapter.title }}".</p>
+            <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h3 class="font-bold text-lg text-green-800">Recompensa por Completar</h3>
+              <div class="flex justify-center gap-8 mt-2">
+                <div>
+                  <p class="text-2xl font-bold text-green-700">+50</p>
+                  <p class="text-sm text-slate-600">Experiencia</p>
+                </div>
+                <div>
+                  <p class="text-2xl font-bold text-sky-600">+15</p>
+                  <p class="text-sm text-slate-600">Fe</p>
+                </div>
+              </div>
+            </div>
+             <a routerLink="/campaign" class="mt-8 inline-block w-full px-6 py-3 bg-teal-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-teal-700 transition-all">
+              Volver al Mapa de Campaña
+            </a>
+        </div>
+      </div>
+    }
+
+  } @else {
+    <p class="text-center py-10 text-lg text-slate-600">No se pudo cargar la información del capítulo.</p>
+  }
+</div>
