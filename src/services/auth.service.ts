@@ -89,9 +89,9 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
       if (this.authLoadingState() === 'error') return;
 
       if (session?.user) {
-        // If the user session is already loaded and this is just a token refresh,
-        // we can skip re-fetching the profile to avoid a disruptive loading screen.
-        if (this.currentUser()?.uid === session.user.id && event === 'TOKEN_REFRESHED') {
+        // If the user's session is already active and loaded in the component state,
+        // skip re-fetching to avoid a disruptive loading screen on reloads or background events.
+        if (this.currentUser()?.uid === session.user.id) {
           if (!this.authInitialized()) {
             this.authInitialized.set(true);
           }
