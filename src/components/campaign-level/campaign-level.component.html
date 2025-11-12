@@ -25,8 +25,22 @@
               <p class="text-2xl font-semibold my-4 text-center">{{ activity.questionText }}</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              @for (option of activity.options || []; track option) {
-                <button (click)="selectAnswer(option)" class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98] bg-white border-slate-300 hover:bg-teal-50 hover:border-teal-400">
+              @for (option of activity.options || []; track $index) {
+                <button (click)="selectAnswer(option)" [disabled]="selectedAnswer() !== null"
+                        class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98]"
+                        [class.bg-white]="selectedAnswer() === null"
+                        [class.border-slate-300]="selectedAnswer() === null"
+                        [class.hover:bg-teal-50]="selectedAnswer() === null"
+                        [class.hover:border-teal-400]="selectedAnswer() === null"
+                        [class.bg-green-500]="answerStatus() === 'correct' && selectedAnswer() === option"
+                        [class.border-green-600]="answerStatus() === 'correct' && selectedAnswer() === option"
+                        [class.bg-red-500]="answerStatus() === 'incorrect' && selectedAnswer() === option"
+                        [class.border-red-600]="answerStatus() === 'incorrect' && selectedAnswer() === option"
+                        [class.bg-green-200]="answerStatus() === 'incorrect' && option === activity.correctAnswer"
+                        [class.border-green-400]="answerStatus() === 'incorrect' && option === activity.correctAnswer"
+                        [class.text-white]="(answerStatus() === 'correct' && selectedAnswer() === option) || (answerStatus() === 'incorrect' && selectedAnswer() === option)"
+                        [class.opacity-75]="selectedAnswer() !== null && selectedAnswer() !== option && option !== activity.correctAnswer"
+                        [class.cursor-not-allowed]="selectedAnswer() !== null">
                   {{ option }}
                 </button>
               }
@@ -37,8 +51,22 @@
               <p class="text-2xl font-semibold my-4 text-center italic">"{{ activity.questionText }}"</p>
             </div>
              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              @for (option of activity.options || []; track option) {
-                <button (click)="selectAnswer(option)" class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98] bg-white border-slate-300 hover:bg-teal-50 hover:border-teal-400">
+              @for (option of activity.options || []; track $index) {
+                <button (click)="selectAnswer(option)" [disabled]="selectedAnswer() !== null"
+                        class="p-4 text-lg font-medium text-left rounded-lg shadow-sm border transition-all duration-200 active:scale-[0.98]"
+                        [class.bg-white]="selectedAnswer() === null"
+                        [class.border-slate-300]="selectedAnswer() === null"
+                        [class.hover:bg-teal-50]="selectedAnswer() === null"
+                        [class.hover:border-teal-400]="selectedAnswer() === null"
+                        [class.bg-green-500]="answerStatus() === 'correct' && selectedAnswer() === option"
+                        [class.border-green-600]="answerStatus() === 'correct' && selectedAnswer() === option"
+                        [class.bg-red-500]="answerStatus() === 'incorrect' && selectedAnswer() === option"
+                        [class.border-red-600]="answerStatus() === 'incorrect' && selectedAnswer() === option"
+                        [class.bg-green-200]="answerStatus() === 'incorrect' && option === activity.correctAnswer"
+                        [class.border-green-400]="answerStatus() === 'incorrect' && option === activity.correctAnswer"
+                        [class.text-white]="(answerStatus() === 'correct' && selectedAnswer() === option) || (answerStatus() === 'incorrect' && selectedAnswer() === option)"
+                        [class.opacity-75]="selectedAnswer() !== null && selectedAnswer() !== option && option !== activity.correctAnswer"
+                        [class.cursor-not-allowed]="selectedAnswer() !== null">
                   {{ option }}
                 </button>
               }
@@ -57,41 +85,21 @@
             <div class="mt-4 text-center text-slate-600"><p>(Función de conectar no implementada en esta versión)</p></div>
           }
         }
-      </div>
-    }
 
-    <!-- Feedback / Deep Study Modal -->
-    @if (gameState() === 'feedback') {
-      <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
-          <div class="p-6">
+        @if(answerStatus() !== null) {
+          <div class="mt-6 text-center p-4 rounded-lg animate-fade-in"
+               [class.bg-green-100]="answerStatus() === 'correct'"
+               [class.text-green-800]="answerStatus() === 'correct'"
+               [class.bg-red-100]="answerStatus() === 'incorrect'"
+               [class.text-red-800]="answerStatus() === 'incorrect'">
             @if(answerStatus() === 'correct') {
-              <h2 class="text-3xl font-bold font-cinzel text-green-600">¡Respuesta Correcta!</h2>
+              <p class="font-bold">¡Correcto! <span class="font-normal">Has ganado +10 XP y +2 Fe.</span></p>
             } @else {
-              <h2 class="text-3xl font-bold font-cinzel text-red-600">Respuesta Incorrecta</h2>
-              <p class="text-slate-600 mt-1">La respuesta correcta era: <span class="font-bold">{{ currentActivity()?.correctAnswer }}</span></p>
+              <p class="font-bold">Incorrecto. <span class="font-normal">La respuesta correcta está resaltada en verde.</span></p>
             }
-
-            <div class="mt-4 p-4 bg-slate-50 border-t border-b border-slate-200">
-              <h3 class="font-bold text-lg font-cinzel text-slate-700">Estudio Profundo</h3>
-              <p class="font-semibold text-teal-700 italic mt-1">{{ currentActivity()?.verse }}</p>
-              @if(isLoadingDeepStudy()){
-                <div class="flex flex-col items-center justify-center min-h-[150px]">
-                  <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600"></div>
-                  <p class="mt-4 text-slate-600">Generando análisis...</p>
-                </div>
-              } @else {
-                <div class="prose max-w-none text-slate-800 mt-2 whitespace-pre-wrap">{{ deepStudyContent() }}</div>
-              }
-            </div>
-            
-            <div class="mt-6 text-right">
-              <button (click)="nextActivity()" [disabled]="isLoadingDeepStudy()" class="px-8 py-3 bg-teal-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-teal-700 transition-all active:scale-95 disabled:bg-teal-400">
-                Continuar
-              </button>
-            </div>
+             <p class="mt-2 text-sm italic">Referencia bíblica: {{ activity.verse }}</p>
           </div>
-        </div>
+        }
       </div>
     }
 
@@ -125,3 +133,13 @@
     <p class="text-center py-10 text-lg text-slate-600">No se pudo cargar la información del capítulo.</p>
   }
 </div>
+
+<style>
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+</style>

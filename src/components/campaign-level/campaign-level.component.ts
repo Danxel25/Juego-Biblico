@@ -3,10 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { AuthService } from '../../services/auth.service';
-import { GeminiService } from '../../services/gemini.service';
 import { BibleChapter, ChapterActivity } from '../../models/campaign.model';
 
-type GameState = 'loading' | 'playing' | 'feedback' | 'finished';
+type GameState = 'loading' | 'playing' | 'finished';
 
 @Component({
   selector: 'app-campaign-level',
@@ -20,7 +19,6 @@ export class CampaignLevelComponent implements OnInit {
   private router = inject(Router);
   private campaignService = inject(CampaignService);
   private authService = inject(AuthService);
-  private geminiService = inject(GeminiService);
 
   // State
   bookId = signal<string | null>(null);
@@ -32,10 +30,6 @@ export class CampaignLevelComponent implements OnInit {
   // Interaction State
   selectedAnswer = signal<string | null>(null);
   answerStatus = signal<'correct' | 'incorrect' | null>(null);
-
-  // Deep Study Modal State
-  isLoadingDeepStudy = signal(false);
-  deepStudyContent = signal('');
 
   currentActivity = computed<ChapterActivity | null>(() => {
     const chap = this.chapter();
@@ -86,21 +80,7 @@ export class CampaignLevelComponent implements OnInit {
       this.authService.incrementUserStats({ xp: 10, fe: 2 });
     }
 
-    this.gameState.set('feedback');
-    this.requestDeepStudy();
-  }
-
-  private async requestDeepStudy(): Promise<void> {
-    const verse = this.currentActivity()?.verse;
-    if (!verse) {
-      this.deepStudyContent.set('No hay un versículo de referencia para esta actividad.');
-      return;
-    }
-
-    this.isLoadingDeepStudy.set(true);
-    const explanation = await this.geminiService.getVerseExplanation(verse);
-    this.deepStudyContent.set(explanation);
-    this.isLoadingDeepStudy.set(false);
+    setTimeout(() => this.nextActivity(), 2500); // Wait 2.5s to see feedback
   }
 
   nextActivity(): void {
@@ -115,12 +95,10 @@ export class CampaignLevelComponent implements OnInit {
     // Reset for next round
     this.selectedAnswer.set(null);
     this.answerStatus.set(null);
-    this.deepStudyContent.set('');
     
     // Move to next activity or finish
     if (this.currentActivityIndex() < this.chapter()!.activities.length - 1) {
       this.currentActivityIndex.update(i => i + 1);
-      this.gameState.set('playing');
     } else {
       this.gameState.set('finished');
       // Give bonus for completing chapter
