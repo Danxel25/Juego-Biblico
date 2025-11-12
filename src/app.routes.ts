@@ -12,6 +12,7 @@ import { CommunityComponent } from './components/community/community.component';
 import { EventComponent } from './components/event/event.component';
 import { CampaignLevelComponent } from './components/campaign-level/campaign-level.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { ViewProfileComponent } from './components/view-profile/view-profile.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -20,6 +21,7 @@ export const APP_ROUTES: Routes = [
   { path: 'campaign', component: CampaignComponent, canActivate: [authGuard] },
   { path: 'campaign/book/:bookId/chapter/:chapterId', component: CampaignLevelComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'profile/:userId', component: ViewProfileComponent, canActivate: [authGuard] },
   { path: 'duel', component: DuelComponent, canActivate: [authGuard] },
   { path: 'community', component: CommunityComponent, canActivate: [authGuard] },
   { path: 'store', component: StoreComponent, canActivate: [authGuard] },

@@ -115,7 +115,19 @@
             <p class="mt-4 text-slate-600">Has demostrado una sabiduría superior.</p>
           } @else if(winner() === 'opponent') {
             <h2 class="text-4xl font-bold font-cinzel text-red-600">Derrota Honorable</h2>
-            <p class="mt-4 text-slate-600">Tu oponente fue formidable. ¡Sigue estudiando!</p>
+            <p class="mt-2 text-slate-600">Tu oponente fue formidable. ¡Sigue estudiando!</p>
+            @if (opponent(); as opp) {
+              <a [routerLink]="['/profile', opp.uid]" class="mt-4 block p-3 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 hover:border-slate-300 transition-all duration-200 group text-left">
+                <div class="flex items-center gap-4">
+                  <img [src]="opp.avatarUrl" [alt]="opp.customName" class="w-14 h-14 rounded-full border-2 border-red-400">
+                  <div>
+                    <p class="font-bold text-slate-800">{{ opp.customName }}</p>
+                    <p class="text-sm text-slate-500">{{ opp.title }}</p>
+                    <p class="text-sm text-teal-600 font-semibold group-hover:underline">Ver perfil</p>
+                  </div>
+                </div>
+              </a>
+            }
           } @else {
             <h2 class="text-4xl font-bold font-cinzel text-slate-700">¡Empate!</h2>
             <p class="mt-4 text-slate-600">Un duelo muy reñido. ¡Ambos han demostrado su valía!</p>

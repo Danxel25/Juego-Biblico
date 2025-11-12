@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { CommunityPost } from '../../models/community.model';
 import { CommunityService } from '../../services/community.service';
 import { AuthService } from '../../services/auth.service';
@@ -12,7 +13,7 @@ import { debounceTime, Subject } from 'rxjs';
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './community.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

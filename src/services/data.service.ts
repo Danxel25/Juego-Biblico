@@ -225,9 +225,15 @@ export class DataService {
 
     // RPC returns a different shape, we need to map it correctly.
     // Specifically, array_length is returned as a count.
-    return (data || []).map((u: any) => ({
-      ...this._mapRawUserToUser(u),
-      unlockedAchievements: { length: u.unlocked_achievements_count || 0 }
-    }));
+    return (data || []).map((u: any) => {
+        const user = this._mapRawUserToUser(u);
+        if (sortBy === 'unlocked_achievements_count') {
+            // For the achievements leaderboard, we are misusing the unlockedAchievements property
+            // to store the count. This is a hack because the User model doesn't have a count property.
+            // The leaderboard component's getScore function knows how to read this.
+            (user as any).unlockedAchievements = { length: u.unlocked_achievements_count || 0 };
+        }
+        return user;
+    });
   }
 }

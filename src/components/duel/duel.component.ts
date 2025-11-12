@@ -1,13 +1,13 @@
 import { Component, ChangeDetectionStrategy, inject, OnDestroy, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DuelService } from '../../services/duel.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-duel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './duel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

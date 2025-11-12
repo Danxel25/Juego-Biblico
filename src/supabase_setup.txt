@@ -375,10 +375,10 @@ returns table (
 ) as $$
 begin
   return query execute
-    'select u.uid, u.email, u.custom_name, u.avatar_url, u.level, u.xp, u.title, u.duels_won, u.current_streak, array_length(u.unlocked_achievements, 1) as unlocked_achievements_count
+    'select u.uid, u.email, u.custom_name, u.avatar_url, u.level, u.xp, u.title, u.duels_won, u.current_streak, coalesce(array_length(u.unlocked_achievements, 1), 0) as unlocked_achievements_count
      from public.users u
      where u.is_guest = false
-     order by ' || quote_ident(sort_by) || ' desc, u.custom_name asc
+     order by ' || quote_ident(sort_by) || ' desc nulls last, u.custom_name asc
      limit 100';
 end;
 $$ language plpgsql;

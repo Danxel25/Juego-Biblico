@@ -1,0 +1,192 @@
+<div class="max-w-3xl mx-auto p-4 sm:p-0">
+  <!-- Back Button -->
+  <div class="mb-4">
+    <button (click)="goBack()" class="flex items-center gap-2 text-slate-600 hover:text-teal-700 font-semibold transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>Volver</span>
+    </button>
+  </div>
+
+  @if(isLoading()) {
+    <div class="text-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600 mx-auto"></div>
+      <p class="mt-4 text-lg text-slate-600">Cargando perfil...</p>
+    </div>
+  } @else if (errorMessage(); as error) {
+    <div class="p-6 bg-white rounded-lg shadow-md border border-red-200 text-center">
+      <p class="text-red-700 font-semibold">{{ error }}</p>
+    </div>
+  } @else if(viewedUser(); as user) {
+    <!-- User Info Header -->
+    <div class="p-6 bg-white rounded-lg shadow-md border border-slate-200 text-center">
+      <img [src]="user.avatarUrl" [alt]="user.customName" class="w-28 h-28 rounded-full mx-auto border-4 border-teal-500 shadow-lg">
+
+      <div class="mt-4 flex items-center justify-center gap-2">
+          <h1 class="text-3xl font-bold font-cinzel text-teal-700">{{ user.customName }}</h1>
+      </div>
+        
+      <p class="mt-1 text-slate-500 font-semibold bg-slate-100 px-3 py-1 rounded-full text-sm inline-block">
+        {{ user.title }} 
+      </p>
+
+      <div class="mt-4 p-3 bg-slate-50 border-t border-slate-200">
+        @if(user.mottoVerse) {
+          <p class="text-slate-600 italic">"{{ user.mottoVerse.text }}"</p>
+          <p class="text-xs text-right text-slate-500 mt-1">- {{ user.mottoVerse.reference }}</p>
+        }
+      </div>
+    </div>
+    
+    <!-- Action Button -->
+    <div class="mt-4">
+      @switch (friendStatus()) {
+        @case ('own_profile') {
+          <a routerLink="/profile" class="block w-full text-center px-4 py-3 bg-teal-600 text-white font-bold rounded-lg shadow-sm hover:bg-teal-700 transition-all">
+            Ir a Mi Perfil
+          </a>
+        }
+        @case ('friends') {
+          <div class="flex items-center justify-center gap-4">
+              <span class="flex-grow text-center px-4 py-2 bg-green-100 text-green-800 font-bold rounded-lg text-sm">
+                Amigos ✅
+              </span>
+              <button (click)="removeFriend()" class="px-4 py-2 bg-red-100 text-red-700 font-bold rounded-lg text-sm hover:bg-red-200 transition">
+                Eliminar Amigo
+              </button>
+          </div>
+        }
+        @case ('request_sent') {
+          <button disabled class="w-full px-4 py-3 bg-slate-200 text-slate-500 font-bold rounded-lg cursor-not-allowed">
+            Solicitud Enviada ⏳
+          </button>
+        }
+        @case ('request_received') {
+          <!-- This state is handled in the community page, but we add it for completeness -->
+          <span class="block w-full text-center px-4 py-3 bg-yellow-100 text-yellow-800 font-bold rounded-lg">
+            Te envió una solicitud 💌
+          </span>
+        }
+        @case ('not_friends') {
+          <button (click)="sendFriendRequest()" class="w-full px-4 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-sm hover:bg-blue-600 transition-all">
+            Añadir Amigo ➕
+          </button>
+        }
+      }
+    </div>
+
+    <!-- Personal Info -->
+    <div class="mt-4 p-4 bg-white rounded-lg shadow-md border border-slate-200">
+        <h2 class="font-bold text-lg font-cinzel text-slate-700 mb-4">Información</h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-slate-500">País</dt>
+            <dd class="mt-1 text-slate-900">{{ user.country || 'No especificado' }}</dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-slate-500">Género</dt>
+            <dd class="mt-1 text-slate-900 capitalize">{{ user.gender || 'No especificado' }}</dd>
+          </div>
+        </dl>
+    </div>
+
+    <!-- Stats & Resources -->
+    <div class="grid md:grid-cols-2 gap-4 mt-4">
+      <!-- Progress -->
+      <div class="p-4 bg-white rounded-lg shadow-md border border-slate-200">
+        <h2 class="font-bold text-lg font-cinzel text-slate-700">Progreso del Jugador</h2>
+        <div class="mt-3">
+          <div class="flex justify-between items-center text-slate-700 font-bold">
+            <span>Nivel {{ user.level }}</span>
+            <span>{{ user.xp }} / {{ user.level * 1000 }} XP</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-4 mt-1 border border-slate-300">
+            <div class="bg-teal-500 h-full rounded-full" [style.width.%]="xpPercentage()"></div>
+          </div>
+        </div>
+      </div>
+       <!-- Resources -->
+      <div class="p-4 bg-white rounded-lg shadow-md border border-slate-200">
+        <h2 class="font-bold text-lg font-cinzel text-slate-700">Recursos</h2>
+        <div class="mt-3 flex justify-around items-center h-full">
+           <div class="text-center">
+             <span class="text-3xl">🌟</span>
+             <p class="text-2xl font-bold text-sky-600">{{ user.fe }}</p>
+             <p class="text-sm text-slate-500">Fe</p>
+           </div>
+            <div class="text-center">
+             <span class="text-3xl">✨</span>
+             <p class="text-2xl font-bold text-amber-500">{{ user.talents }}</p>
+             <p class="text-sm text-slate-500">Talentos</p>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements Showcase -->
+    <div class="mt-4 p-4 bg-white rounded-lg shadow-md border border-slate-200">
+      <h2 class="font-bold text-lg font-cinzel text-slate-700 mb-4">Vitrina de Logros</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        @for(ach of achievementsForDisplay(); track ach.id) {
+          <div class="relative group p-4 border rounded-lg text-center transition-all duration-300 flex flex-col items-center justify-center aspect-square"
+               [class.border-amber-400]="ach.unlocked"
+               [class.bg-gradient-to-br]="ach.unlocked"
+               [class.from-amber-50]="ach.unlocked"
+               [class.to-yellow-100]="ach.unlocked"
+               [class.shadow-md]="ach.unlocked"
+               [class.border-slate-200]="!ach.unlocked"
+               [class.bg-slate-50]="!ach.unlocked">
+            
+            <div class="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto transition-all"
+                   [class.text-amber-500]="ach.unlocked"
+                   [class.text-slate-400]="!ach.unlocked"
+                   [class.filter]="!ach.unlocked"
+                   [class.grayscale]="!ach.unlocked"
+                   [class.opacity-70]="!ach.unlocked"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                   <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="ach.icon" />
+              </svg>
+
+              @if (!ach.unlocked) {
+                <div class="absolute inset-0 bg-slate-100/30 flex items-center justify-center rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500 opacity-80" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              }
+            </div>
+
+            <h3 class="font-bold mt-2 text-sm text-slate-800"
+                [class.opacity-50]="!ach.unlocked">{{ ach.title }}</h3>
+            
+            <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 p-2 bg-slate-800 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {{ ach.description }}
+              <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-800"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+  <!-- Notification Popup -->
+  @if(notification(); as notif) {
+    <div class="fixed bottom-24 sm:bottom-10 right-1/2 translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white animate-fade-in-out"
+         [class.bg-green-600]="notif.type === 'success'"
+         [class.bg-red-600]="notif.type === 'error'">
+      {{ notif.message }}
+    </div>
+  }
+</div>
+
+<style>
+  @keyframes fade-in-out {
+    0%, 100% { opacity: 0; transform: translate(50%, 20px) scale(0.9); }
+    10%, 90% { opacity: 1; transform: translate(50%, 0) scale(1); }
+  }
+  .animate-fade-in-out {
+    animation: fade-in-out 4s ease-in-out forwards;
+    transform: translateX(50%); /* Start position centered */
+  }
+</style>

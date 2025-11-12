@@ -23,7 +23,8 @@ export class ProfileComponent {
   private authService = inject(AuthService);
   private achievementService = inject(AchievementService);
   private profileService = inject(ProfileService);
-  private fb = inject(FormBuilder);
+  // FIX: Explicitly type the injected FormBuilder to fix type inference issues.
+  private fb: FormBuilder = inject(FormBuilder);
 
   user = this.authService.currentUser;
   
