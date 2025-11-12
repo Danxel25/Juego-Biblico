@@ -19,13 +19,13 @@ export class SoundService {
   private audioUnlocked = false;
 
   private soundMap: { [key in SoundType]: string } = {
-    correct: 'https://aistudiocdn.com/games/juegobiblico/correct.mp3',
-    incorrect: 'https://aistudiocdn.com/games/juegobiblico/incorrect.mp3',
-    achievement: 'https://aistudiocdn.com/games/juegobiblico/achievement.mp3',
-    level_complete: 'https://aistudiocdn.com/games/juegobiblico/level_complete.mp3',
-    ui_click: 'https://aistudiocdn.com/games/juegobiblico/ui_click.mp3',
-    notification: 'https://aistudiocdn.com/games/juegobiblico/notification.mp3',
-    purchase: 'https://aistudiocdn.com/games/juegobiblico/purchase.mp3'
+    correct: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_correct.mp3',
+    incorrect: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_error.mp3',
+    achievement: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_achievement.mp3',
+    level_complete: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_level_up.mp3',
+    ui_click: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_button_click.mp3',
+    notification: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_notification.mp3',
+    purchase: 'https://storage.googleapis.com/maker-suite-media/codelab-assets/generative_ai_integration/sound_purchase.mp3'
   };
 
   constructor() {

@@ -86,30 +86,40 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
     }
 
     supabase.auth.onAuthStateChange(async (event, session) => {
+      // User requested to stop auto-login on page load.
+      // 'INITIAL_SESSION' is the event fired by Supabase when a session is found in storage on startup.
+      // By ignoring this event, we ensure the user must manually log in.
+      if (event === 'INITIAL_SESSION') {
+        this.currentUser.set(null);
+        this.authLoadingState.set('idle');
+        this.authInitialized.set(true); // Allow routing guards to proceed
+        return;
+      }
+      
       if (this.authLoadingState() === 'error') return;
 
       if (session?.user) {
-        // If the user's session is already active and loaded in the component state,
-        // skip re-fetching to avoid a disruptive loading screen on reloads or background events.
-        if (this.currentUser()?.uid === session.user.id) {
-          if (!this.authInitialized()) {
-            this.authInitialized.set(true);
-          }
-          return; // Skip re-fetch
+        // This logic now primarily handles 'SIGNED_IN' after a manual login.
+        // It also handles 'TOKEN_REFRESHED', but we prevent a disruptive UI reload if the user is already loaded.
+        if (event === 'TOKEN_REFRESHED' && this.currentUser()) {
+          return; // Don't re-fetch profile on background token refresh
         }
 
         this.authLoadingState.set('fetching_profile');
         await this.fetchUserProfile(session.user);
       } else {
-        // Only update state if there was a user before (i.e., this is a real sign-out event)
+        // This handles 'SIGNED_OUT'
         if (this.currentUser() !== null) {
           this.currentUser.set(null);
           this.presenceService.disconnect();
           this.authLoadingState.set('idle');
         }
       }
-      // Ensure the app is marked as initialized so routing logic can proceed.
-      this.authInitialized.set(true);
+      
+      // Ensure the app is marked as initialized for other auth events.
+      if (!this.authInitialized()) {
+        this.authInitialized.set(true);
+      }
     });
 
     effect(() => {

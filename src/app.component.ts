@@ -7,6 +7,7 @@ import { AchievementService } from './services/achievement.service';
 import { DailyMannaComponent } from './components/daily-manna/daily-manna.component';
 import { DailyMannaService } from './services/daily-manna.service';
 import { SoundService } from './services/sound.service';
+import { InactivityService } from './services/inactivity.service';
 
 @Component({
   selector: 'app-root',
@@ -91,6 +92,7 @@ export class AppComponent implements OnInit {
   achievementService = inject(AchievementService);
   dailyMannaService = inject(DailyMannaService);
   soundService = inject(SoundService);
+  inactivityService = inject(InactivityService);
   
   isAuthenticated = this.authService.isAuthenticated;
   authLoadingState = this.authService.authLoadingState;
@@ -105,6 +107,13 @@ export class AppComponent implements OnInit {
       // When user is authenticated and not loading, check for Manna
       if (this.isAuthenticated() && this.authLoadingState() === 'idle') {
         this.dailyMannaService.checkForManna();
+      }
+
+      // Start/stop inactivity timer based on auth state
+      if (this.isAuthenticated()) {
+        this.inactivityService.start();
+      } else {
+        this.inactivityService.stop();
       }
     });
   }

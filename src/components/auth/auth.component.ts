@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, signal, inject, effect } from '@ang
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 export function passwordMatchValidator(controlName: string, matchingControlName: string): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -28,12 +29,19 @@ export function passwordMatchValidator(controlName: string, matchingControlName:
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.css'],
+  styles: [`
+    /* Oculta el icono de calendario por defecto en navegadores WebKit (Chrome, Safari) */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      display: none;
+      -webkit-appearance: none;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthComponent {
   private authService = inject(AuthService);
   private fb: FormBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
 
   isLoginView = signal(true);
   isLoading = signal(false);
@@ -66,6 +74,12 @@ export class AuthComponent {
       } else {
         this.loginForm.enable();
         this.registerForm.enable();
+      }
+    });
+
+    this.route.queryParams.subscribe(params => {
+      if (params['reason'] === 'inactivity') {
+        this.errorMessage.set('Tu sesión ha sido cerrada por inactividad.');
       }
     });
   }
