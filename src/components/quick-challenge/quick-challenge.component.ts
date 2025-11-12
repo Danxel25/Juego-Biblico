@@ -6,6 +6,7 @@ import { GeminiService } from '../../services/gemini.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EventService } from '../../services/event.service';
+import { SoundService } from '../../services/sound.service';
 import { Observable } from 'rxjs';
 
 type GameState = 'notStarted' | 'inProgress' | 'finished';
@@ -24,6 +25,7 @@ export class QuickChallengeComponent implements OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
   private eventService = inject(EventService);
+  private soundService = inject(SoundService);
 
   gameState = signal<GameState>('notStarted');
   challengeMode = signal<ChallengeMode>('normal');
@@ -152,6 +154,7 @@ export class QuickChallengeComponent implements OnDestroy {
     const correct = option === this.currentQuestion()?.correctAnswer;
 
     if (correct) {
+      this.soundService.playSound('correct');
       this.answerStatus.set('correct');
       const points = 10 * this.scoreMultiplier();
       this.score.update(s => s + points);
@@ -163,6 +166,7 @@ export class QuickChallengeComponent implements OnDestroy {
         this.eventService.recordCorrectAnswer(this.currentQuestion().category);
       }
     } else {
+      this.soundService.playSound('incorrect');
       this.answerStatus.set('incorrect');
       this.timer.update(t => Math.max(0, t - 5));
       this.consecutiveCorrect.set(0);
@@ -222,6 +226,7 @@ export class QuickChallengeComponent implements OnDestroy {
     clearInterval(this.timerInterval);
     this.gameState.set('finished');
     this.isPaused.set(false);
+    this.soundService.playSound('level_complete');
     if (this.challengeMode() === 'normal') {
       this.saveScore(this.score());
     }

@@ -1,21 +1,21 @@
 <div class="max-w-5xl mx-auto space-y-8">
   @if (user(); as currentUser) {
     <!-- Welcome Header -->
-    <div class="text-center p-6 rounded-2xl shadow-lg bg-gradient-to-br from-white to-slate-100 border border-slate-200">
-        <h1 class="text-3xl md:text-4xl font-extrabold font-cinzel text-teal-800 tracking-wider">Bienvenido a Cruzada Celestial</h1>
+    <div class="text-center p-6 rounded-2xl shadow-lg bg-gradient-to-br from-white to-slate-100 border border-slate-200 dark:from-gray-800 dark:to-slate-900 dark:border-slate-700">
+        <h1 class="text-3xl md:text-4xl font-extrabold font-cinzel text-teal-800 dark:text-teal-400 tracking-wider">Bienvenido a Cruzada Celestial</h1>
         @if(currentUser.mottoVerse) {
-          <p class="mt-2 text-md text-slate-600 italic">"{{currentUser.mottoVerse.text}}" - {{currentUser.mottoVerse.reference}}</p>
+          <p class="mt-2 text-md text-slate-600 dark:text-slate-300 italic">"{{currentUser.mottoVerse.text}}" - {{currentUser.mottoVerse.reference}}</p>
         }
         
         <div class="mt-6 max-w-sm mx-auto">
-            <div class="flex justify-between items-center text-slate-700 font-bold text-sm">
+            <div class="flex justify-between items-center text-slate-700 dark:text-slate-300 font-bold text-sm">
                 <span>Nivel {{ currentUser.level }}</span>
                 <span>{{ currentUser.xp }} / {{ currentUser.level * 1000 }} XP</span>
             </div>
-            <div class="w-full bg-slate-200 rounded-full h-3 mt-1 shadow-inner">
+            <div class="w-full bg-slate-200 rounded-full h-3 mt-1 shadow-inner dark:bg-slate-700">
                 <div class="bg-gradient-to-r from-teal-400 to-emerald-500 h-3 rounded-full transition-all duration-500" [style.width.%]="xpPercentage"></div>
             </div>
-            <p class="text-sm mt-1 text-slate-500 font-semibold">{{ currentUser.title }}</p>
+            <p class="text-sm mt-1 text-slate-500 dark:text-slate-400 font-semibold">{{ currentUser.title }}</p>
         </div>
     </div>
   }

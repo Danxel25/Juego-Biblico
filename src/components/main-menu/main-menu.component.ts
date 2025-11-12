@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-main-menu',
@@ -10,10 +11,12 @@ import { AuthService } from '../../services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainMenuComponent {
-  authService = inject(AuthService);
-  user = this.authService.currentUser;
+  private route = inject(ActivatedRoute);
 
-  constructor(private router: Router) {}
+  private resolvedData = toSignal(this.route.data);
+  user = computed(() => (this.resolvedData()?.['user'] as User | null));
+
+  constructor() {}
 
   get xpPercentage(): number {
     const user = this.user();

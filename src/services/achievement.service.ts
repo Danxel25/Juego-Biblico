@@ -2,12 +2,14 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Achievement } from '../models/achievement.model';
 import { User } from '../models/user.model';
 import { AuthService } from './auth.service';
+import { SoundService } from './sound.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AchievementService {
   private authService = inject(AuthService);
+  private soundService = inject(SoundService);
 
   private readonly _allAchievements = signal<Achievement[]>([
     { id: 'genesis_complete', title: 'Creador de Mundos', description: 'Completa la Tierra de la Creación.', icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h8a2 2 0 002-2v-1a2 2 0 012-2h1.945C17.05 7.055 13.945 4 10 4S2.95 7.055 3.055 11zM10 20a5 5 0 100-10 5 5 0 000 10z' },
@@ -68,6 +70,7 @@ export class AchievementService {
 
   private notify(achievement: Achievement): void {
     this.achievementUnlocked.set(achievement);
+    this.soundService.playSound('achievement');
     setTimeout(() => this.achievementUnlocked.set(null), 5000); // Notification visible for 5 seconds
   }
 }

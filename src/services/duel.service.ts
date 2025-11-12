@@ -4,6 +4,7 @@ import { Question } from '../models/question.model';
 import { QuestionService } from './question.service';
 import { AuthService } from './auth.service';
 import { AchievementService } from './achievement.service';
+import { SoundService } from './sound.service';
 
 type GameState = 'lobby' | 'searching' | 'playing' | 'finished';
 type Winner = 'player' | 'opponent' | 'tie' | null;
@@ -18,6 +19,7 @@ export class DuelService {
   private questionService = inject(QuestionService);
   private authService = inject(AuthService);
   private achievementService = inject(AchievementService);
+  private soundService = inject(SoundService);
 
   // Game State
   readonly gameState = signal<GameState>('lobby');
@@ -75,10 +77,12 @@ export class DuelService {
 
     const isCorrect = answer === this.currentQuestion()?.correctAnswer;
     if (isCorrect) {
+      this.soundService.playSound('correct');
       this.answerStatus.set('correct');
       this.playerScore.update(s => s + 1);
       this.authService.incrementUserStats({ correct_answers: 1 });
     } else {
+      this.soundService.playSound('incorrect');
       this.answerStatus.set('incorrect');
     }
 
@@ -142,6 +146,7 @@ export class DuelService {
 
     // Grant rewards and stats
     if (this.winner() === 'player') {
+      this.soundService.playSound('level_complete');
       await this.authService.incrementUserStats({ xp: 75, fe: 30, duels_won: 1 });
     } else {
       await this.authService.incrementUserStats({ xp: 25, fe: 10 });

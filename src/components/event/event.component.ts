@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit, O
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../services/event.service';
+import { SoundService } from '../../services/sound.service';
 
 interface TimeLeft {
   days: number;
@@ -20,6 +21,7 @@ interface TimeLeft {
 export class EventComponent implements OnInit, OnDestroy {
   private eventService = inject(EventService);
   private router = inject(Router);
+  private soundService = inject(SoundService);
 
   event = this.eventService.activeEvent;
   progress = this.eventService.userProgress;
@@ -79,6 +81,7 @@ export class EventComponent implements OnInit, OnDestroy {
 
     const success = await this.eventService.claimReward();
     if (success) {
+      this.soundService.playSound('achievement');
       this.showNotification('¡Recompensas reclamadas con éxito!');
     } else {
       this.showNotification('No se pudieron reclamar las recompensas.');

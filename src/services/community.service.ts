@@ -11,17 +11,33 @@ import { v4 as uuidv4 } from 'uuid';
 export class CommunityService {
   private dataService = inject(DataService);
 
-  async getPosts(): Promise<CommunityPost[]> {
+  async getPosts(page: number, limit: number): Promise<CommunityPost[]> {
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
     const { data, error } = await supabase
       .from('community_posts')
       .select('*')
-      .order('created_at', { ascending: false });
-      
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
     if (error) {
-      console.error("Error fetching community posts:", error);
+      console.error('Error fetching community posts:', error);
       throw error;
     }
     return data as CommunityPost[];
+  }
+
+  async getPostsCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from('community_posts')
+      .select('*', { count: 'exact', head: true });
+
+    if (error) {
+      console.error('Error getting posts count:', error);
+      throw error;
+    }
+    return count ?? 0;
   }
 
   async addPost(title: string, content: string, user: User): Promise<void> {
@@ -55,9 +71,9 @@ export class CommunityService {
       content,
       created_at: new Date().toISOString(),
     };
-    const { error } = await supabase.rpc('add_reply_to_post', { 
-      p_post_id: postId, 
-      p_new_reply: newReply 
+    const { error } = await supabase.rpc('add_reply_to_post', {
+      p_post_id: postId,
+      p_new_reply: newReply,
     });
     if (error) throw error;
   }

@@ -7,6 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Configuración para habilitar el modo oscuro basado en clases
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -42,7 +48,7 @@
 }
 </script>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800 dark:bg-gray-900 dark:text-slate-200">
   <app-root></app-root>
 </body>
 </html>

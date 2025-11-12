@@ -1,0 +1,55 @@
+@if(mannaData(); as data) {
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative p-8 border-4 border-amber-300 bg-parchment dark:bg-gray-800 dark:border-amber-700">
+      <!-- Decorative corners -->
+      <div class="absolute top-2 left-2 w-8 h-8 border-t-2 border-l-2 border-amber-400 dark:border-amber-600"></div>
+      <div class="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-amber-400 dark:border-amber-600"></div>
+      <div class="absolute bottom-2 left-2 w-8 h-8 border-b-2 border-l-2 border-amber-400 dark:border-amber-600"></div>
+      <div class="absolute bottom-2 right-2 w-8 h-8 border-b-2 border-r-2 border-amber-400 dark:border-amber-600"></div>
+      
+      <div class="text-center">
+        <h1 class="text-3xl font-bold font-cinzel text-amber-800 dark:text-amber-300">Maná Diario</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Una porción de la palabra para fortalecer tu día.</p>
+        
+        <div class="my-6 p-4 border-t border-b border-amber-400/50 dark:border-amber-600/50">
+          <p class="text-2xl italic text-slate-800 dark:text-slate-100">"{{ data.verse }}"</p>
+          <p class="text-right text-lg font-semibold text-slate-600 dark:text-slate-400 mt-2">- {{ data.reference }}</p>
+        </div>
+
+        @if(data.isLoading) {
+          <div class="min-h-[140px] flex flex-col items-center justify-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-700 dark:border-amber-400"></div>
+            <p class="mt-4 text-slate-500 dark:text-slate-400">Generando reflexión...</p>
+          </div>
+        } @else {
+          <div class="min-h-[140px] text-left">
+            <h2 class="font-bold text-lg text-amber-900 dark:text-amber-200 font-cinzel">Reflexión</h2>
+            <p class="mt-2 text-slate-700 dark:text-slate-300 text-base">{{ data.reflection }}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-3 text-right">Reflexión generada por IA</p>
+          </div>
+        }
+
+        <button (click)="closeManna()" [disabled]="data.isLoading" 
+                class="mt-8 w-full max-w-xs mx-auto px-6 py-3 bg-teal-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-teal-700 transition-all duration-200 active:scale-95 disabled:bg-slate-400 disabled:cursor-not-allowed">
+          Recibir Bendición (+10 Fe)
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<style>
+.bg-parchment {
+  background-color: #fdf5e6; /* A parchment-like color */
+}
+.dark .bg-parchment {
+  background-color: #3a3228; /* A darker, parchment-like color for dark mode */
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+</style>

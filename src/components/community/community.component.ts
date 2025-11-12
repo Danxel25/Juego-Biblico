@@ -8,6 +8,7 @@ import { User } from '../../models/user.model';
 import { Announcement } from '../../models/announcement.model';
 import { AnnouncementService } from '../../services/announcement.service';
 import { DataService } from '../../services/data.service';
+import { SoundService } from '../../services/sound.service';
 import { debounceTime, Subject } from 'rxjs';
 
 @Component({
@@ -22,11 +23,16 @@ export class CommunityComponent implements OnInit {
   private authService = inject(AuthService);
   private announcementService = inject(AnnouncementService);
   private dataService = inject(DataService);
+  private soundService = inject(SoundService);
 
   user = this.authService.currentUser;
   
   // Forum State
   communityPosts = signal<CommunityPost[]>([]);
+  private readonly pageSize = 5;
+  private totalPosts = signal(0);
+  isLoadingPosts = signal(false);
+
   showNewTopicForm = signal(false);
   newTopicTitle = signal('');
   newTopicContent = signal('');
@@ -47,7 +53,8 @@ export class CommunityComponent implements OnInit {
   // General State
   notification = signal<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Computed values for friend search status
+  // Computed values
+  hasMorePosts = computed(() => this.communityPosts().length < this.totalPosts());
   friendIds = computed(() => new Set(this.friends().map(f => f.uid)));
   requestIds = computed(() => new Set(this.incomingRequests().map(r => r.uid)));
   sentRequestIds = computed(() => new Set(this.user()?.friendRequestsSent || []));
@@ -59,17 +66,41 @@ export class CommunityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadPosts();
+    this.loadInitialPosts();
     this.loadFriendData();
   }
 
-  async loadPosts(): Promise<void> {
+  async loadInitialPosts(): Promise<void> {
+    this.isLoadingPosts.set(true);
     try {
-      const posts = await this.communityService.getPosts();
+      const [posts, count] = await Promise.all([
+        this.communityService.getPosts(1, this.pageSize),
+        this.communityService.getPostsCount(),
+      ]);
       this.communityPosts.set(posts);
+      this.totalPosts.set(count);
     } catch (error) {
       console.error("Error fetching community posts:", (error as Error).message || error);
       this.showNotification('No se pudieron cargar las publicaciones del foro.', 'error');
+    } finally {
+      this.isLoadingPosts.set(false);
+    }
+  }
+
+  async loadMorePosts(): Promise<void> {
+    if (this.isLoadingPosts() || !this.hasMorePosts()) return;
+    
+    this.isLoadingPosts.set(true);
+    try {
+      const currentPage = Math.floor(this.communityPosts().length / this.pageSize);
+      const nextPage = currentPage + 1;
+      const newPosts = await this.communityService.getPosts(nextPage, this.pageSize);
+      this.communityPosts.update(currentPosts => [...currentPosts, ...newPosts]);
+    } catch (error) {
+       console.error("Error fetching more posts:", (error as Error).message || error);
+       this.showNotification('Error al cargar más publicaciones.', 'error');
+    } finally {
+      this.isLoadingPosts.set(false);
     }
   }
 
@@ -209,7 +240,7 @@ export class CommunityComponent implements OnInit {
       this.newTopicTitle.set('');
       this.newTopicContent.set('');
       this.showNewTopicForm.set(false);
-      this.loadPosts();
+      this.loadInitialPosts();
     } catch (error) {
       console.error("Error creating new topic:", (error as Error).message || error);
       this.showNotification('Hubo un error al crear el tema.', 'error');
@@ -241,7 +272,7 @@ export class CommunityComponent implements OnInit {
       this.showNotification('¡Respuesta añadida! Has ganado 15 de Fe.', 'success');
       this.replyingToPostId.set(null);
       this.replyContent.set('');
-      this.loadPosts();
+      this.loadInitialPosts();
     } catch (error) {
       console.error("Error submitting reply:", (error as Error).message || error);
       this.showNotification('Hubo un error al enviar la respuesta.', 'error');
@@ -282,6 +313,9 @@ export class CommunityComponent implements OnInit {
 
   private showNotification(message: string, type: 'success' | 'error'): void {
     this.notification.set({ message, type });
+    if (type === 'success') {
+      this.soundService.playSound('notification');
+    }
     setTimeout(() => this.notification.set(null), 4000);
   }
 }

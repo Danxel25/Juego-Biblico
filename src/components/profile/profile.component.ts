@@ -7,6 +7,8 @@ import { ProfileService } from '../../services/profile.service';
 import { MottoVerse } from '../../models/profile.model';
 import { User } from '../../models/user.model';
 import { Achievement } from '../../models/achievement.model';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface DisplayAchievement extends Achievement {
   unlocked: boolean;
@@ -23,10 +25,11 @@ export class ProfileComponent {
   private authService = inject(AuthService);
   private achievementService = inject(AchievementService);
   private profileService = inject(ProfileService);
-  // FIX: Explicitly type the injected FormBuilder to fix type inference issues.
   private fb: FormBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
 
-  user = this.authService.currentUser;
+  private resolvedData = toSignal(this.route.data);
+  user = computed(() => (this.resolvedData()?.['user'] as User | null));
   
   // Customization options from service
   avatars = this.profileService.avatars;

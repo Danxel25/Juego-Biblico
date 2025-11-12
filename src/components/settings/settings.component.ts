@@ -20,6 +20,7 @@ export class SettingsComponent {
   soundEffects = this.settingsService.soundEffects;
   music = this.settingsService.music;
   notifications = this.settingsService.notifications;
+  theme = this.settingsService.theme;
 
   updateSoundEffects(event: Event): void {
     const value = (event.target as HTMLInputElement).checked;
@@ -34,6 +35,11 @@ export class SettingsComponent {
   updateNotifications(event: Event): void {
     const value = (event.target as HTMLInputElement).checked;
     this.settingsService.updateSetting('notifications', value);
+  }
+
+  updateTheme(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.settingsService.updateTheme(isChecked);
   }
   
   logout(): void {

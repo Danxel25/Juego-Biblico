@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
+import { SoundService } from '../../services/sound.service';
 
 interface StoreItem {
   id: string;
@@ -22,6 +23,7 @@ interface StoreItem {
 })
 export class StoreComponent {
   private authService = inject(AuthService);
+  private soundService = inject(SoundService);
   user = this.authService.currentUser;
   
   purchaseMessage = signal<string | null>(null);
@@ -82,6 +84,7 @@ export class StoreComponent {
         await this.authService.incrementUserStats({ fe: -item.cost, talents: 10 });
       }
       
+      this.soundService.playSound('purchase');
       this.purchaseMessage.set(`¡Has comprado "${item.name}"!`);
       setTimeout(() => this.purchaseMessage.set(null), 3000);
     } catch(error) {

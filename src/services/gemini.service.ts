@@ -66,4 +66,30 @@ Mantén la respuesta estructurada, clara y enriquecedora.`,
       return 'Hubo un error al generar la explicación del versículo. Por favor, inténtalo de nuevo más tarde.';
     }
   }
+
+  async generateDailyReflection(verseText: string, verseReference: string): Promise<string> {
+    if (!this.ai) {
+      return Promise.resolve(
+        'El modo Maná Diario está desactivado. No se encontró la clave API de Gemini.'
+      );
+    }
+
+    try {
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `Actúa como un devoto y sabio consejero espiritual. Para el siguiente versículo bíblico: "${verseText}" (${verseReference}), escribe una reflexión corta (entre 60 y 90 palabras) en español. La reflexión debe ser:
+1.  **Inspiradora y Positiva:** Enfocada en la esperanza, el amor, la fe o la fortaleza.
+2.  **Aplicable:** Ofrece una idea práctica o un pensamiento para que el lector lo aplique en su día.
+3.  **Clara y Concisa:** Fácil de entender para cualquier persona.
+No incluyas un saludo inicial ni una despedida. Ve directamente al contenido de la reflexión.`,
+        config: { 
+          temperature: 0.7,
+        },
+      });
+      return response.text;
+    } catch (error) {
+      console.error('Error calling Gemini API for daily reflection:', error);
+      return 'Hubo un error al generar la reflexión diaria. Por favor, inténtalo de nuevo más tarde.';
+    }
+  }
 }

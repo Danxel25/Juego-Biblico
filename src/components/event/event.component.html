@@ -1,46 +1,46 @@
-<div class="max-w-3xl mx-auto p-4 sm:p-0 text-slate-800">
+<div class="max-w-3xl mx-auto p-4 sm:p-0 text-slate-800 dark:text-slate-100">
   @if (event(); as currentEvent) {
-    <div class="p-6 bg-white rounded-lg shadow-md border border-slate-200">
+    <div class="p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
       <!-- Header -->
-      <div class="text-center border-b border-slate-200 pb-6">
-        <h1 class="text-4xl font-bold font-cinzel text-teal-700">{{ currentEvent.title }}</h1>
-        <p class="mt-2 text-slate-600 max-w-xl mx-auto">{{ currentEvent.description }}</p>
+      <div class="text-center border-b border-slate-200 dark:border-slate-700 pb-6">
+        <h1 class="text-4xl font-bold font-cinzel text-teal-700 dark:text-teal-400">{{ currentEvent.title }}</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-300 max-w-xl mx-auto">{{ currentEvent.description }}</p>
       </div>
 
       <!-- Countdown Timer -->
       @if(timeLeft(); as time) {
         <div class="py-6">
-          <h2 class="text-center text-sm font-bold uppercase text-slate-500 tracking-wider">Tiempo Restante</h2>
+          <h2 class="text-center text-sm font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Tiempo Restante</h2>
           <div class="mt-3 grid grid-cols-4 gap-2 sm:gap-4 text-center">
-            <div class="p-3 bg-slate-100 rounded-lg">
-              <div class="text-3xl font-bold text-teal-600">{{ time.days }}</div>
-              <div class="text-xs text-slate-500">Días</div>
+            <div class="p-3 bg-slate-100 rounded-lg dark:bg-slate-700">
+              <div class="text-3xl font-bold text-teal-600 dark:text-teal-400">{{ time.days }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Días</div>
             </div>
-            <div class="p-3 bg-slate-100 rounded-lg">
-              <div class="text-3xl font-bold text-teal-600">{{ time.hours }}</div>
-              <div class="text-xs text-slate-500">Horas</div>
+            <div class="p-3 bg-slate-100 rounded-lg dark:bg-slate-700">
+              <div class="text-3xl font-bold text-teal-600 dark:text-teal-400">{{ time.hours }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Horas</div>
             </div>
-            <div class="p-3 bg-slate-100 rounded-lg">
-              <div class="text-3xl font-bold text-teal-600">{{ time.minutes }}</div>
-              <div class="text-xs text-slate-500">Minutos</div>
+            <div class="p-3 bg-slate-100 rounded-lg dark:bg-slate-700">
+              <div class="text-3xl font-bold text-teal-600 dark:text-teal-400">{{ time.minutes }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Minutos</div>
             </div>
-            <div class="p-3 bg-slate-100 rounded-lg">
-              <div class="text-3xl font-bold text-teal-600">{{ time.seconds }}</div>
-              <div class="text-xs text-slate-500">Segundos</div>
+            <div class="p-3 bg-slate-100 rounded-lg dark:bg-slate-700">
+              <div class="text-3xl font-bold text-teal-600 dark:text-teal-400">{{ time.seconds }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400">Segundos</div>
             </div>
           </div>
         </div>
       }
 
       <!-- Progress -->
-      <div class="py-6 border-t border-slate-200">
-        <h2 class="text-center text-sm font-bold uppercase text-slate-500 tracking-wider">Tu Progreso</h2>
+      <div class="py-6 border-t border-slate-200 dark:border-slate-700">
+        <h2 class="text-center text-sm font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Tu Progreso</h2>
         <div class="mt-3">
-          <div class="flex justify-between items-center text-slate-700 font-bold text-lg">
+          <div class="flex justify-between items-center text-slate-700 dark:text-slate-200 font-bold text-lg">
             <span>Objetivo</span>
             <span>{{ progress()?.score || 0 }} / {{ currentEvent.goal }}</span>
           </div>
-          <div class="w-full bg-slate-200 rounded-full h-5 mt-1 shadow-inner border border-slate-300">
+          <div class="w-full bg-slate-200 rounded-full h-5 mt-1 shadow-inner border border-slate-300 dark:bg-slate-700 dark:border-slate-600">
             <div class="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full transition-all duration-500 flex items-center justify-center text-white text-xs font-bold" [style.width.%]="progressPercentage()">
                {{ progressPercentage().toFixed(0) }}%
             </div>
@@ -49,23 +49,23 @@
       </div>
 
       <!-- Rewards -->
-      <div class="py-6 border-t border-slate-200 text-center">
-        <h2 class="text-sm font-bold uppercase text-slate-500 tracking-wider">Recompensas Exclusivas</h2>
+      <div class="py-6 border-t border-slate-200 dark:border-slate-700 text-center">
+        <h2 class="text-sm font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Recompensas Exclusivas</h2>
         <div class="mt-3 flex justify-center gap-8">
            <div class="text-center">
              <span class="text-4xl">🌟</span>
-             <p class="text-xl font-bold text-yellow-600">{{ currentEvent.rewards.xp }}</p>
-             <p class="text-sm text-slate-500">Experiencia</p>
+             <p class="text-xl font-bold text-yellow-600 dark:text-yellow-400">{{ currentEvent.rewards.xp }}</p>
+             <p class="text-sm text-slate-500 dark:text-slate-400">Experiencia</p>
            </div>
             <div class="text-center">
              <span class="text-4xl">🌟</span>
-             <p class="text-xl font-bold text-sky-600">{{ currentEvent.rewards.fe }}</p>
-             <p class="text-sm text-slate-500">Fe</p>
+             <p class="text-xl font-bold text-sky-600 dark:text-sky-400">{{ currentEvent.rewards.fe }}</p>
+             <p class="text-sm text-slate-500 dark:text-slate-400">Fe</p>
            </div>
             <div class="text-center">
              <span class="text-4xl">✨</span>
-             <p class="text-xl font-bold text-amber-500">{{ currentEvent.rewards.talents }}</p>
-             <p class="text-sm text-slate-500">Talentos</p>
+             <p class="text-xl font-bold text-amber-500 dark:text-amber-400">{{ currentEvent.rewards.talents }}</p>
+             <p class="text-sm text-slate-500 dark:text-slate-400">Talentos</p>
            </div>
         </div>
       </div>
@@ -96,15 +96,15 @@
 
     </div>
   } @else {
-    <div class="p-8 bg-white rounded-lg shadow-md border border-slate-200 text-center">
-      <h1 class="text-4xl font-bold font-cinzel text-teal-700">Evento Semanal</h1>
+    <div class="p-8 bg-white rounded-lg shadow-md border border-slate-200 text-center dark:bg-gray-800 dark:border-slate-700">
+      <h1 class="text-4xl font-bold font-cinzel text-teal-700 dark:text-teal-400">Evento Semanal</h1>
       <div class="my-8">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
       <p class="mt-4 text-2xl font-semibold">No hay eventos activos en este momento.</p>
-      <p class="mt-2 text-slate-600">¡Vuelve pronto para participar en nuevos desafíos y ganar recompensas exclusivas!</p>
+      <p class="mt-2 text-slate-600 dark:text-slate-300">¡Vuelve pronto para participar en nuevos desafíos y ganar recompensas exclusivas!</p>
       <a routerLink="/main-menu" class="mt-8 inline-block px-8 py-3 bg-slate-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-slate-700 transition-all duration-200 active:scale-95">
         Volver al Menú Principal
       </a>

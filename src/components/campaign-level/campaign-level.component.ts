@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { AuthService } from '../../services/auth.service';
 import { BibleChapter, ChapterActivity } from '../../models/campaign.model';
+import { SoundService } from '../../services/sound.service';
 
 type GameState = 'loading' | 'playing' | 'finished';
 
@@ -19,6 +20,7 @@ export class CampaignLevelComponent implements OnInit {
   private router = inject(Router);
   private campaignService = inject(CampaignService);
   private authService = inject(AuthService);
+  private soundService = inject(SoundService);
 
   // State
   bookId = signal<string | null>(null);
@@ -77,7 +79,10 @@ export class CampaignLevelComponent implements OnInit {
     this.answerStatus.set(isCorrect ? 'correct' : 'incorrect');
 
     if (isCorrect) {
+      this.soundService.playSound('correct');
       this.authService.incrementUserStats({ xp: 10, fe: 2 });
+    } else {
+      this.soundService.playSound('incorrect');
     }
 
     setTimeout(() => this.nextActivity(), 2500); // Wait 2.5s to see feedback
@@ -101,6 +106,7 @@ export class CampaignLevelComponent implements OnInit {
       this.currentActivityIndex.update(i => i + 1);
     } else {
       this.gameState.set('finished');
+      this.soundService.playSound('level_complete');
       // Give bonus for completing chapter
       this.authService.incrementUserStats({ xp: 50, fe: 15 });
     }

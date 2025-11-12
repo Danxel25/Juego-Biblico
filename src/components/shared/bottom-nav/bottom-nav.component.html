@@ -1,4 +1,4 @@
-<nav class="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm shadow-[0_-2px_5px_rgba(0,0,0,0.05)] border-t border-slate-200 z-40">
+<nav class="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm shadow-[0_-2px_5px_rgba(0,0,0,0.05)] border-t border-slate-200 z-40 dark:bg-gray-900/95 dark:border-slate-700">
   <div class="flex justify-around items-center h-16">
     <a routerLink="/main-menu" 
        routerLinkActive="active-nav-item" 
@@ -74,7 +74,7 @@
 
 <style>
   .nav-item {
-    @apply flex flex-col items-center justify-center text-slate-500 transition-all duration-200;
+    @apply flex flex-col items-center justify-center text-slate-500 transition-all duration-200 dark:text-slate-400;
   }
   .nav-item:active {
     @apply transform scale-90;
@@ -83,7 +83,7 @@
     @apply text-xs font-medium transition-all duration-200;
   }
   .active-nav-item {
-    @apply text-teal-600;
+    @apply text-teal-600 dark:text-teal-400;
   }
   .active-nav-item .nav-text {
     @apply font-bold;

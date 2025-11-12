@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SoundService } from '../../../services/sound.service';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -9,9 +10,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BottomNavComponent {
+  private soundService = inject(SoundService);
   lastClicked = signal<string | null>(null);
 
   onNavClick(path: string): void {
+    this.soundService.playSound('ui_click');
     this.lastClicked.set(path);
     setTimeout(() => {
         if (this.lastClicked() === path) {
