@@ -40,6 +40,9 @@ export class DailyMannaService {
     
     const lastTimestamp = this.getLastMannaTimestamp();
     if (this.isNewDay(lastTimestamp)) {
+      // CRITICAL FIX: Set the timestamp immediately to prevent re-showing on the same day.
+      localStorage.setItem(this.storageKey, new Date().toISOString());
+      
       this.showManna.set(true);
       const chosenVerse = MANNA_VERSES[Math.floor(Math.random() * MANNA_VERSES.length)];
       
@@ -59,7 +62,7 @@ export class DailyMannaService {
   markMannaAsRead(): void {
     this.showManna.set(false);
     this.mannaData.set(null);
-    localStorage.setItem(this.storageKey, new Date().toISOString());
+    // The timestamp is now set when the Manna is shown, not when it's claimed.
     this.soundService.playSound('notification');
     this.authService.incrementUserStats({ fe: 10 }); // Reward for reading
   }

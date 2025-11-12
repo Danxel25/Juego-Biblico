@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, signal, inject, ElementRef } from '
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
   selector: 'app-header',
@@ -15,8 +16,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   authService = inject(AuthService);
+  settingsService = inject(SettingsService);
   private elementRef = inject(ElementRef);
   user = this.authService.currentUser;
+  theme = this.settingsService.theme;
   
   isProfileMenuOpen = signal(false);
   isClosing = signal(false);
@@ -36,6 +39,11 @@ export class HeaderComponent {
     }
   }
   
+  toggleTheme(): void {
+    const isDark = this.theme() === 'dark';
+    this.settingsService.updateTheme(!isDark);
+  }
+
   closeProfileMenu(): void {
     if (!this.isProfileMenuOpen() || this.isClosing()) return;
 
