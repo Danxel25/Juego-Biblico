@@ -7,9 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
 import { Announcement } from '../../models/announcement.model';
 import { AnnouncementService } from '../../services/announcement.service';
-import { DataService } from '../../services/data.service';
 import { SoundService } from '../../services/sound.service';
-import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-community',
@@ -22,7 +20,6 @@ export class CommunityComponent implements OnInit {
   private communityService = inject(CommunityService);
   private authService = inject(AuthService);
   private announcementService = inject(AnnouncementService);
-  private dataService = inject(DataService);
   private soundService = inject(SoundService);
 
   user = this.authService.currentUser;
@@ -41,33 +38,17 @@ export class CommunityComponent implements OnInit {
   
   // Announcements
   announcements = this.announcementService.announcements;
-
-  // Friends State
-  activeTab = signal<'forum' | 'friends'>('forum');
-  friends = signal<User[]>([]);
-  incomingRequests = signal<User[]>([]);
-  searchResults = signal<User[]>([]);
-  searchQuery = signal('');
-  private searchSubject = new Subject<string>();
   
   // General State
   notification = signal<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Computed values
   hasMorePosts = computed(() => this.communityPosts().length < this.totalPosts());
-  friendIds = computed(() => new Set(this.friends().map(f => f.uid)));
-  requestIds = computed(() => new Set(this.incomingRequests().map(r => r.uid)));
-  sentRequestIds = computed(() => new Set(this.user()?.friendRequestsSent || []));
 
-  constructor() {
-    this.searchSubject.pipe(debounceTime(300)).subscribe(query => {
-      this.performSearch(query);
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.loadInitialPosts();
-    this.loadFriendData();
   }
 
   async loadInitialPosts(): Promise<void> {
@@ -104,19 +85,6 @@ export class CommunityComponent implements OnInit {
     }
   }
 
-  async loadFriendData(): Promise<void> {
-    const currentUser = this.user();
-    if (!currentUser) return;
-    try {
-      const friendData = await this.dataService.getFriendData(currentUser.uid);
-      this.friends.set(friendData.friends);
-      this.incomingRequests.set(friendData.requests);
-    } catch (error) {
-      console.error("Error fetching friend data:", (error as Error).message || error);
-      this.showNotification('No se pudieron cargar los datos de amigos.', 'error');
-    }
-  }
-
   onNewTopicTitleChange(event: Event): void {
     this.newTopicTitle.set((event.target as HTMLInputElement).value);
   }
@@ -129,94 +97,6 @@ export class CommunityComponent implements OnInit {
     this.replyContent.set((event.target as HTMLTextAreaElement).value);
   }
   
-  onSearchQueryChanged(event: Event): void {
-    const query = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(query);
-    this.searchSubject.next(query);
-  }
-
-  async performSearch(query: string): Promise<void> {
-    const currentUser = this.user();
-    if (!currentUser || !query.trim()) {
-      this.searchResults.set([]);
-      return;
-    }
-    try {
-      const results = await this.dataService.searchUsers(query, currentUser.uid);
-      this.searchResults.set(results);
-    } catch (error) {
-      console.error("Error searching users:", (error as Error).message || error);
-      this.showNotification('Error al buscar usuarios.', 'error');
-    }
-  }
-
-  async sendFriendRequest(targetUser: User): Promise<void> {
-    const currentUser = this.user();
-    if (!currentUser) return;
-    try {
-      await this.dataService.sendFriendRequest(currentUser.uid, targetUser.uid);
-      // Optimistically update the UI
-      this.authService.currentUser.update(u => {
-        if (!u) return null;
-        return {
-          ...u,
-          friendRequestsSent: [...(u.friendRequestsSent || []), targetUser.uid]
-        };
-      });
-      this.showNotification(`Solicitud enviada a ${targetUser.customName}`, 'success');
-    } catch (error) {
-      console.error("Error sending friend request:", (error as Error).message || error);
-      this.showNotification('No se pudo enviar la solicitud.', 'error');
-    }
-  }
-
-  async acceptFriendRequest(requestingUser: User): Promise<void> {
-    const currentUser = this.user();
-    if (!currentUser) return;
-    try {
-      await this.dataService.acceptFriendRequest(currentUser.uid, requestingUser.uid);
-      // Update UI
-      this.friends.update(friends => [...friends, requestingUser]);
-      this.incomingRequests.update(reqs => reqs.filter(r => r.uid !== requestingUser.uid));
-      this.showNotification(`Ahora eres amigo de ${requestingUser.customName}.`, 'success');
-    } catch (error) {
-      console.error("Error accepting friend request:", (error as Error).message || error);
-      this.showNotification('No se pudo aceptar la solicitud.', 'error');
-    }
-  }
-
-  async declineFriendRequest(requestingUser: User): Promise<void> {
-    const currentUser = this.user();
-    if (!currentUser) return;
-    try {
-      await this.dataService.declineFriendRequest(currentUser.uid, requestingUser.uid);
-      this.incomingRequests.update(reqs => reqs.filter(r => r.uid !== requestingUser.uid));
-      this.showNotification(`Solicitud de ${requestingUser.customName} rechazada.`, 'success');
-    } catch (error) {
-      console.error("Error declining friend request:", (error as Error).message || error);
-      this.showNotification('No se pudo rechazar la solicitud.', 'error');
-    }
-  }
-  
-  async removeFriend(friend: User): Promise<void> {
-      const currentUser = this.user();
-      if (!currentUser) return;
-      try {
-        await this.dataService.removeFriend(currentUser.uid, friend.uid);
-        this.friends.update(friends => friends.filter(f => f.uid !== friend.uid));
-        this.showNotification(`${friend.customName} ha sido eliminado de tus amigos.`, 'success');
-      } catch (error) {
-        console.error("Error removing friend:", (error as Error).message || error);
-        this.showNotification('No se pudo eliminar al amigo.', 'error');
-      }
-  }
-
-  getUserStatus(targetUser: User): 'friend' | 'request_sent' | 'none' {
-    if (this.friendIds().has(targetUser.uid)) return 'friend';
-    if (this.sentRequestIds().has(targetUser.uid)) return 'request_sent';
-    return 'none';
-  }
-
   // --- Forum Methods ---
 
   toggleNewTopicForm(): void {

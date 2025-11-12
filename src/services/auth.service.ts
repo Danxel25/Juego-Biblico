@@ -4,6 +4,7 @@ import { supabase, supabaseUrl, supabaseKey } from '../environments/supabase.con
 import { User } from '../models/user.model';
 import { DataService } from './data.service';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { PresenceService } from './presence.service';
 
 function formatSupabaseError(error: any): string {
   if (!error) return 'Ocurrió un error inesperado.';
@@ -50,6 +51,7 @@ Este archivo contiene solo código SQL, por lo que no deberías tener problemas 
 export class AuthService {
   private router = inject(Router);
   private dataService = inject(DataService);
+  private presenceService = inject(PresenceService);
 
   readonly currentUser = signal<User | null>(null);
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
@@ -91,6 +93,7 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
         await this.fetchUserProfile(session.user);
       } else {
         this.currentUser.set(null);
+        this.presenceService.disconnect();
         this.authLoadingState.set('idle');
       }
       this.authInitialized.set(true);
@@ -136,6 +139,7 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
             };
           }
           this.currentUser.set(userProfile);
+          this.presenceService.connect();
           this.authLoadingState.set('idle');
           this.authErrorMessage.set(null);
           return; // Success!
@@ -167,6 +171,7 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
           };
         }
         this.currentUser.set(finalProfile);
+        this.presenceService.connect();
         this.authLoadingState.set('idle');
         this.authErrorMessage.set(null);
         return;
@@ -306,6 +311,7 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
   }
 
   async logout(): Promise<void> {
+    await this.presenceService.disconnect();
     await supabase.auth.signOut();
     this.authErrorMessage.set(null);
   }

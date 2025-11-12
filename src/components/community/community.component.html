@@ -4,302 +4,169 @@
     <p class="mt-2 text-slate-600 dark:text-slate-300">Colabora, pregunta y crece en la fe junto a otros.</p>
   </div>
 
-  <!-- Tabs -->
-  <div class="mb-6 border-b border-slate-200 dark:border-slate-700">
-    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-      <button (click)="activeTab.set('forum')"
-              class="px-1 pb-3 font-semibold border-b-2"
-              [class.border-teal-500]="activeTab() === 'forum'"
-              [class.text-teal-600]="activeTab() === 'forum'"
-              [class.dark:text-teal-400]="activeTab() === 'forum'"
-              [class.border-transparent]="activeTab() !== 'forum'"
-              [class.text-slate-500]="activeTab() !== 'forum'"
-              [class.dark:text-slate-400]="activeTab() !== 'forum'"
-              [class.hover:text-slate-700]="activeTab() !== 'forum'"
-              [class.dark:hover:text-slate-200]="activeTab() !== 'forum'"
-              [class.hover:border-slate-300]="activeTab() !== 'forum'"
-              [class.dark:hover:border-slate-500]="activeTab() !== 'forum'">
-        Foro
-      </button>
-      <button (click)="activeTab.set('friends')"
-              class="px-1 pb-3 font-semibold border-b-2"
-              [class.border-teal-500]="activeTab() === 'friends'"
-              [class.text-teal-600]="activeTab() === 'friends'"
-              [class.dark:text-teal-400]="activeTab() === 'friends'"
-              [class.border-transparent]="activeTab() !== 'friends'"
-              [class.text-slate-500]="activeTab() !== 'friends'"
-              [class.dark:text-slate-400]="activeTab() !== 'friends'"
-              [class.hover:text-slate-700]="activeTab() !== 'friends'"
-              [class.dark:hover:text-slate-200]="activeTab() !== 'friends'"
-              [class.hover:border-slate-300]="activeTab() !== 'friends'"
-              [class.dark:hover:border-slate-500]="activeTab() !== 'friends'">
-        Amigos
-      </button>
-    </nav>
-  </div>
-
   <!-- Forum Content -->
-  @if(activeTab() === 'forum') {
-    <div class="animate-content-fade-in">
-      <!-- Announcements Section -->
-      @if (announcements().length > 0) {
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold font-cinzel text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514C18.332 12.89 14.432 19 9.5 19H7a2 2 0 01-2-2v-1.033z" />
-            </svg>
-            Anuncios
-          </h2>
-          <div class="space-y-4">
-            @for (announcement of announcements(); track announcement.id) {
-              <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg shadow-sm dark:bg-yellow-900/40 dark:border-yellow-600">
-                <h3 class="font-bold text-yellow-800 dark:text-yellow-200">{{ announcement.title }}</h3>
-                <p class="text-yellow-700 dark:text-yellow-300 mt-1">{{ announcement.content }}</p>
-                <p class="text-xs text-yellow-600 dark:text-yellow-400 text-right mt-2">{{ announcement.date | date:'longDate' }}</p>
-              </div>
-            }
-          </div>
-        </div>
-      }
-
-      <!-- Community Forum -->
-      <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
-        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
-          <h2 class="text-2xl font-bold font-cinzel text-slate-700 dark:text-slate-200">Foro de la Comunidad</h2>
-          <button (click)="toggleNewTopicForm()" class="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-sm hover:bg-teal-700 transition-all duration-200 active:scale-95 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-            </svg>
-            <span>Crear Nuevo Tema</span>
-          </button>
-        </div>
-
-        <!-- New Topic Form -->
-        @if(showNewTopicForm()){
-          <div class="p-4 mb-6 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-900 dark:border-slate-700">
-            <h3 class="text-lg font-bold font-cinzel text-slate-800 dark:text-slate-100 mb-2">Iniciar una Discusión</h3>
-            <input type="text" placeholder="Título del Tema..." 
-                   [value]="newTopicTitle()" 
-                   (input)="onNewTopicTitleChange($event)"
-                   class="w-full px-3 py-2 mb-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600">
-            <textarea placeholder="Escribe tu pregunta o pensamiento aquí..." rows="4" 
-                      [value]="newTopicContent()"
-                      (input)="onNewTopicContentChange($event)"
-                      class="w-full px-3 py-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600"></textarea>
-            <div class="flex justify-end gap-2 mt-2">
-              <button (click)="showNewTopicForm.set(false)" class="px-4 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Cancelar</button>
-              <button (click)="submitNewTopic()" class="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition">Publicar Tema</button>
-            </div>
-          </div>
-        }
-
-        <!-- Posts List -->
-        <div class="space-y-6">
-          @if (communityPosts().length > 0) {
-            @for(post of communityPosts(); track post.id) {
-              <div class="p-4 border border-slate-200 rounded-lg dark:border-slate-700">
-                <!-- Post -->
-                <div class="flex items-start gap-3">
-                  <a [routerLink]="['/profile', post.author.uid]" class="flex-shrink-0">
-                    <img [src]="post.author.avatarUrl" [alt]="post.author.customName" class="w-10 h-10 rounded-full border-2 border-teal-200 hover:ring-2 hover:ring-teal-400 transition">
-                  </a>
-                  <div>
-                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">{{ post.title }}</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">
-                      Por <a [routerLink]="['/profile', post.author.uid]" class="font-semibold hover:underline">{{ post.author.customName }}</a> el {{ post.created_at | date:'medium' }}
-                    </p>
-                    <p class="mt-2 text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ post.content }}</p>
-                  </div>
-                </div>
-
-                <!-- Actions: Like and Reply -->
-                <div class="mt-4 flex items-center gap-4">
-                  <button (click)="likePost(post)" [disabled]="hasUserLiked(post)"
-                          aria-label="Dar me gusta a la publicación"
-                          class="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200"
-                          [class.text-slate-500]="!hasUserLiked(post)"
-                          [class.dark:text-slate-400]="!hasUserLiked(post)"
-                          [class.hover:text-red-500]="!hasUserLiked(post)"
-                          [class.dark:hover:text-red-400]="!hasUserLiked(post)"
-                          [class.text-red-500]="hasUserLiked(post)"
-                          [class.dark:text-red-400]="hasUserLiked(post)"
-                          [class.cursor-not-allowed]="hasUserLiked(post)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" [attr.d]="hasUserLiked(post) ? 'M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z' : 'M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z'" clip-rule="evenodd" [class.fill-transparent]="!hasUserLiked(post)" [attr.stroke]="hasUserLiked(post) ? 'none' : 'currentColor'" stroke-width="1.5" />
-                    </svg>
-                    <span>{{ post.likes || 0 }}</span>
-                  </button>
-                  <button (click)="toggleReplyForm(post.id!)" class="text-sm font-semibold text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300">Responder</button>
-                </div>
-                
-                <!-- Replies -->
-                <div class="mt-4 pl-8 space-y-3">
-                  @for(reply of post.replies; track reply.id) {
-                    <div class="flex items-start gap-3 p-2 bg-slate-50 rounded-md dark:bg-slate-700/50">
-                      <a [routerLink]="['/profile', reply.author.uid]" class="flex-shrink-0">
-                        <img [src]="reply.author.avatarUrl" [alt]="reply.author.customName" class="w-8 h-8 rounded-full border-2 border-slate-200 dark:border-slate-600 hover:ring-2 hover:ring-teal-400 transition">
-                      </a>
-                      <div>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">
-                          <a [routerLink]="['/profile', reply.author.uid]" class="font-semibold hover:underline">{{ reply.author.customName }}</a> respondió:
-                        </p>
-                        <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ reply.content }}</p>
-                      </div>
-                    </div>
-                  }
-                </div>
-
-                <!-- Reply Form (collapsible) -->
-                @if(replyingToPostId() === post.id) {
-                  <div class="mt-4 pl-8">
-                    <div class="mt-2">
-                      <textarea placeholder="Escribe tu respuesta..." rows="2" 
-                                [value]="replyContent()" 
-                                (input)="onReplyContentChange($event)"
-                                class="w-full px-3 py-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600"></textarea>
-                      <div class="flex justify-end gap-2 mt-2">
-                        <button (click)="replyingToPostId.set(null)" class="px-3 py-1 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition text-sm dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Cancelar</button>
-                        <button (click)="submitReply(post.id!)" class="px-3 py-1 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition text-sm">Enviar</button>
-                      </div>
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-          } @else if (!isLoadingPosts()) {
-            <div class="text-center py-8 text-slate-500 dark:text-slate-400">
-              <p>No hay discusiones todavía.</p>
-              <p>¡Sé el primero en iniciar una!</p>
+  <div class="animate-content-fade-in">
+    <!-- Announcements Section -->
+    @if (announcements().length > 0) {
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold font-cinzel text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514C18.332 12.89 14.432 19 9.5 19H7a2 2 0 01-2-2v-1.033z" />
+          </svg>
+          Anuncios
+        </h2>
+        <div class="space-y-4">
+          @for (announcement of announcements(); track announcement.id) {
+            <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg shadow-sm dark:bg-yellow-900/40 dark:border-yellow-600">
+              <h3 class="font-bold text-yellow-800 dark:text-yellow-200">{{ announcement.title }}</h3>
+              <p class="text-yellow-700 dark:text-yellow-300 mt-1">{{ announcement.content }}</p>
+              <p class="text-xs text-yellow-600 dark:text-yellow-400 text-right mt-2">{{ announcement.date | date:'longDate' }}</p>
             </div>
           }
         </div>
-
-        <!-- Loading Indicator for initial load -->
-        @if (isLoadingPosts() && communityPosts().length === 0) {
-          <div class="text-center py-8">
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto"></div>
-            <p class="mt-3 text-slate-500 dark:text-slate-400">Cargando publicaciones...</p>
-          </div>
-        }
-
-        <!-- Load More Button -->
-        @if (hasMorePosts()) {
-          <div class="mt-6 text-center">
-            <button (click)="loadMorePosts()" [disabled]="isLoadingPosts()" class="px-6 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition-all active:scale-95 disabled:opacity-75 disabled:cursor-wait dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">
-              @if(isLoadingPosts()) {
-                <span class="flex items-center">
-                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-700 dark:text-slate-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Cargando...
-                </span>
-              } @else {
-                <span>Cargar más</span>
-              }
-            </button>
-          </div>
-        }
       </div>
-    </div>
-  }
+    }
 
-  <!-- Friends Content -->
-  @if(activeTab() === 'friends') {
-    <div class="space-y-8 animate-content-fade-in">
-      
-      <!-- Find Friends -->
-      <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
-        <h2 class="text-xl font-bold font-cinzel text-slate-700 dark:text-slate-200 mb-4">Buscar Amigos</h2>
-        <div class="relative">
-          <input type="text" [value]="searchQuery()" (input)="onSearchQueryChanged($event)" placeholder="Buscar por nombre..."
-                 class="w-full px-4 py-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600">
-        </div>
-        @if(searchResults().length > 0) {
-          <ul class="mt-4 space-y-2 max-h-60 overflow-y-auto">
-            @for(foundUser of searchResults(); track foundUser.uid) {
-              <li class="flex items-center justify-between p-2 bg-slate-50 rounded-md dark:bg-slate-700/50">
-                <a [routerLink]="['/profile', foundUser.uid]" class="flex items-center gap-3 group">
-                  <img [src]="foundUser.avatarUrl" [alt]="foundUser.customName" class="w-10 h-10 rounded-full group-hover:ring-2 group-hover:ring-teal-400 transition">
-                  <span class="font-semibold group-hover:underline">{{ foundUser.customName }}</span>
-                </a>
-                @switch (getUserStatus(foundUser)) {
-                  @case ('friend') {
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full dark:bg-green-500/20 dark:text-green-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                      </svg>
-                      Amigos
-                    </span>
-                  }
-                  @case ('request_sent') {
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-600 bg-slate-200 rounded-full dark:bg-slate-600 dark:text-slate-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.415L11 9.586V6z" clip-rule="evenodd" />
-                      </svg>
-                      Enviada
-                    </span>
-                  }
-                  @case ('none') {
-                    <button (click)="sendFriendRequest(foundUser)" class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition active:scale-95">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                      </svg>
-                      Añadir
-                    </button>
-                  }
-                }
-              </li>
-            }
-          </ul>
-        }
+    <!-- Community Forum -->
+    <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
+        <h2 class="text-2xl font-bold font-cinzel text-slate-700 dark:text-slate-200">Foro de la Comunidad</h2>
+        <button (click)="toggleNewTopicForm()" class="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-sm hover:bg-teal-700 transition-all duration-200 active:scale-95 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          <span>Crear Nuevo Tema</span>
+        </button>
       </div>
 
-      <!-- Friend Requests -->
-      @if(incomingRequests().length > 0) {
-        <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
-          <h2 class="text-xl font-bold font-cinzel text-slate-700 dark:text-slate-200 mb-4">Solicitudes de Amistad</h2>
-          <ul class="space-y-2">
-            @for(request of incomingRequests(); track request.uid) {
-              <li class="flex items-center justify-between p-2 bg-yellow-50 border border-yellow-200 rounded-md dark:bg-yellow-900/40 dark:border-yellow-700">
-                <a [routerLink]="['/profile', request.uid]" class="flex items-center gap-3 group">
-                  <img [src]="request.avatarUrl" [alt]="request.customName" class="w-10 h-10 rounded-full group-hover:ring-2 group-hover:ring-teal-400 transition">
-                  <span class="font-semibold group-hover:underline">{{ request.customName }}</span>
-                </a>
-                <div class="flex gap-2">
-                  <button (click)="acceptFriendRequest(request)" class="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition" aria-label="Aceptar"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></button>
-                  <button (click)="declineFriendRequest(request)" class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition" aria-label="Rechazar"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></button>
-                </div>
-              </li>
-            }
-          </ul>
+      <!-- New Topic Form -->
+      @if(showNewTopicForm()){
+        <div class="p-4 mb-6 bg-slate-50 border border-slate-200 rounded-lg dark:bg-slate-900 dark:border-slate-700">
+          <h3 class="text-lg font-bold font-cinzel text-slate-800 dark:text-slate-100 mb-2">Iniciar una Discusión</h3>
+          <input type="text" placeholder="Título del Tema..." 
+                 [value]="newTopicTitle()" 
+                 (input)="onNewTopicTitleChange($event)"
+                 class="w-full px-3 py-2 mb-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600">
+          <textarea placeholder="Escribe tu pregunta o pensamiento aquí..." rows="4" 
+                    [value]="newTopicContent()"
+                    (input)="onNewTopicContentChange($event)"
+                    class="w-full px-3 py-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600"></textarea>
+          <div class="flex justify-end gap-2 mt-2">
+            <button (click)="showNewTopicForm.set(false)" class="px-4 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Cancelar</button>
+            <button (click)="submitNewTopic()" class="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition">Publicar Tema</button>
+          </div>
         </div>
       }
 
-      <!-- My Friends -->
-      <div class="p-4 sm:p-6 bg-white rounded-lg shadow-md border border-slate-200 dark:bg-gray-800 dark:border-slate-700">
-        <h2 class="text-xl font-bold font-cinzel text-slate-700 dark:text-slate-200 mb-4">Mis Amigos</h2>
-        @if(friends().length > 0) {
-          <ul class="space-y-2">
-            @for(friend of friends(); track friend.uid) {
-              <li class="flex items-center justify-between p-2 bg-slate-50 rounded-md dark:bg-slate-700/50">
-                <a [routerLink]="['/profile', friend.uid]" class="flex items-center gap-3 group">
-                  <img [src]="friend.avatarUrl" [alt]="friend.customName" class="w-10 h-10 rounded-full group-hover:ring-2 group-hover:ring-teal-400 transition">
-                  <span class="font-semibold group-hover:underline">{{ friend.customName }}</span>
+      <!-- Posts List -->
+      <div class="space-y-6">
+        @if (communityPosts().length > 0) {
+          @for(post of communityPosts(); track post.id) {
+            <div class="p-4 border border-slate-200 rounded-lg dark:border-slate-700">
+              <!-- Post -->
+              <div class="flex items-start gap-3">
+                <a [routerLink]="['/profile', post.author.uid]" class="flex-shrink-0">
+                  <img [src]="post.author.avatarUrl" [alt]="post.author.customName" class="w-10 h-10 rounded-full border-2 border-teal-200 hover:ring-2 hover:ring-teal-400 transition">
                 </a>
-                <div class="flex gap-2">
-                  <button class="px-3 py-1 text-sm bg-sky-500 text-white font-semibold rounded-lg hover:bg-sky-600 transition">Desafiar</button>
-                  <button (click)="removeFriend(friend)" class="px-3 py-1 text-sm bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Eliminar</button>
+                <div>
+                  <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">{{ post.title }}</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Por <a [routerLink]="['/profile', post.author.uid]" class="font-semibold hover:underline">{{ post.author.customName }}</a> el {{ post.created_at | date:'medium' }}
+                  </p>
+                  <p class="mt-2 text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ post.content }}</p>
                 </div>
-              </li>
-            }
-          </ul>
-        } @else {
-          <p class="text-center text-slate-500 dark:text-slate-400 py-4">Aún no tienes amigos. ¡Usa el buscador para encontrar a otros jugadores!</p>
+              </div>
+
+              <!-- Actions: Like and Reply -->
+              <div class="mt-4 flex items-center gap-4">
+                <button (click)="likePost(post)" [disabled]="hasUserLiked(post)"
+                        aria-label="Dar me gusta a la publicación"
+                        class="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200"
+                        [class.text-slate-500]="!hasUserLiked(post)"
+                        [class.dark:text-slate-400]="!hasUserLiked(post)"
+                        [class.hover:text-red-500]="!hasUserLiked(post)"
+                        [class.dark:hover:text-red-400]="!hasUserLiked(post)"
+                        [class.text-red-500]="hasUserLiked(post)"
+                        [class.dark:text-red-400]="hasUserLiked(post)"
+                        [class.cursor-not-allowed]="hasUserLiked(post)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" [attr.d]="hasUserLiked(post) ? 'M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z' : 'M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z'" clip-rule="evenodd" [class.fill-transparent]="!hasUserLiked(post)" [attr.stroke]="hasUserLiked(post) ? 'none' : 'currentColor'" stroke-width="1.5" />
+                  </svg>
+                  <span>{{ post.likes || 0 }}</span>
+                </button>
+                <button (click)="toggleReplyForm(post.id!)" class="text-sm font-semibold text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300">Responder</button>
+              </div>
+              
+              <!-- Replies -->
+              <div class="mt-4 pl-8 space-y-3">
+                @for(reply of post.replies; track reply.id) {
+                  <div class="flex items-start gap-3 p-2 bg-slate-50 rounded-md dark:bg-slate-700/50">
+                    <a [routerLink]="['/profile', reply.author.uid]" class="flex-shrink-0">
+                      <img [src]="reply.author.avatarUrl" [alt]="reply.author.customName" class="w-8 h-8 rounded-full border-2 border-slate-200 dark:border-slate-600 hover:ring-2 hover:ring-teal-400 transition">
+                    </a>
+                    <div>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">
+                        <a [routerLink]="['/profile', reply.author.uid]" class="font-semibold hover:underline">{{ reply.author.customName }}</a> respondió:
+                      </p>
+                      <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ reply.content }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Reply Form (collapsible) -->
+              @if(replyingToPostId() === post.id) {
+                <div class="mt-4 pl-8">
+                  <div class="mt-2">
+                    <textarea placeholder="Escribe tu respuesta..." rows="2" 
+                              [value]="replyContent()" 
+                              (input)="onReplyContentChange($event)"
+                              class="w-full px-3 py-2 text-slate-800 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600"></textarea>
+                    <div class="flex justify-end gap-2 mt-2">
+                      <button (click)="replyingToPostId.set(null)" class="px-3 py-1 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition text-sm dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">Cancelar</button>
+                      <button (click)="submitReply(post.id!)" class="px-3 py-1 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition text-sm">Enviar</button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        } @else if (!isLoadingPosts()) {
+          <div class="text-center py-8 text-slate-500 dark:text-slate-400">
+            <p>No hay discusiones todavía.</p>
+            <p>¡Sé el primero en iniciar una!</p>
+          </div>
         }
       </div>
+
+      <!-- Loading Indicator for initial load -->
+      @if (isLoadingPosts() && communityPosts().length === 0) {
+        <div class="text-center py-8">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto"></div>
+          <p class="mt-3 text-slate-500 dark:text-slate-400">Cargando publicaciones...</p>
+        </div>
+      }
+
+      <!-- Load More Button -->
+      @if (hasMorePosts()) {
+        <div class="mt-6 text-center">
+          <button (click)="loadMorePosts()" [disabled]="isLoadingPosts()" class="px-6 py-2 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition-all active:scale-95 disabled:opacity-75 disabled:cursor-wait dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500">
+            @if(isLoadingPosts()) {
+              <span class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-700 dark:text-slate-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Cargando...
+              </span>
+            } @else {
+              <span>Cargar más</span>
+            }
+          </button>
+        </div>
+      }
     </div>
-  }
+  </div>
 
   <!-- Notification Popup -->
   @if(notification(); as notif) {

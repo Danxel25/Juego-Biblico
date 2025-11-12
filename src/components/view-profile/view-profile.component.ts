@@ -6,6 +6,9 @@ import { AuthService } from '../../services/auth.service';
 import { AchievementService } from '../../services/achievement.service';
 import { User } from '../../models/user.model';
 import { Achievement } from '../../models/achievement.model';
+import { PresenceService } from '../../services/presence.service';
+// Fix: Import `toSignal` for reactive state management.
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface DisplayAchievement extends Achievement {
   unlocked: boolean;
@@ -18,18 +21,33 @@ interface DisplayAchievement extends Achievement {
   templateUrl: './view-profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+// Fix: Removed OnDestroy as it's no longer needed with toSignal.
 export class ViewProfileComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dataService = inject(DataService);
   private authService = inject(AuthService);
   private achievementService = inject(AchievementService);
+  private presenceService = inject(PresenceService);
 
   currentUser = this.authService.currentUser;
   viewedUser = signal<User | null>(null);
   isLoading = signal(true);
   errorMessage = signal<string | null>(null);
   notification = signal<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Presence State
+  // Fix: Convert the presence observable into a signal.
+  private presenceState = toSignal(this.presenceService.presenceState$, { initialValue: {} });
+  // Fix: Create a computed signal for online status that reacts to changes in viewedUser or presenceState.
+  isViewedUserOnline = computed(() => {
+    const viewed = this.viewedUser();
+    const state = this.presenceState();
+    if (!viewed || !state) {
+      return false;
+    }
+    return Object.keys(state).includes(viewed.uid);
+  });
 
   // Achievement data
   private allAchievements = this.achievementService.allAchievements;
@@ -88,6 +106,7 @@ export class ViewProfileComponent implements OnInit {
       const userProfile = await this.dataService.getUser(userId);
       if (userProfile) {
         this.viewedUser.set(userProfile);
+        // Fix: Removed the problematic synchronous call. The computed signal 'isViewedUserOnline' now handles this reactively.
       } else {
         this.errorMessage.set('No se pudo encontrar el perfil de este usuario.');
       }
