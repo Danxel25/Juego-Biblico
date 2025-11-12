@@ -8,16 +8,10 @@ export class AnnouncementService {
 
   private readonly _announcements = signal<Announcement[]>([
     {
-      id: 'weekly-event-1',
-      title: '¡Evento Semanal: El Diluvio de Preguntas!',
-      content: '¡Prepárense! Este fin de semana, todas las preguntas en el Desafío Rápido estarán relacionadas con el Génesis y la historia de Noé. ¡Habrá recompensas dobles de Maná!',
-      date: new Date('2024-07-28T10:00:00Z')
-    },
-    {
-      id: 'update-v1.1',
-      title: 'Actualización de la App v1.1 - ¡Duelos Bíblicos!',
-      content: 'Estamos emocionados de anunciar que el modo "Duelo Bíblico" está en su fase final de pruebas y será lanzado muy pronto. ¡Gracias por su paciencia y fe!',
-      date: new Date('2024-07-25T15:30:00Z')
+      id: 'update-v1.2',
+      title: '¡Novedades de la Versión! Mejoras y Correcciones',
+      content: `Hemos estado trabajando para mejorar tu experiencia en Cruzada Celestial. ¡Estas son las últimas novedades!\n\n• Perfil de Amigos Unificado: Toda la gestión de amigos (búsqueda, solicitudes, lista) ahora está centralizada en tu página de Perfil para una experiencia social más fluida.\n• Modo Oscuro Instantáneo: Añadimos un práctico icono de sol/luna en la barra de navegación para que puedas cambiar de tema al instante.\n• Recompensas Justas: Corregimos la lógica del 'Maná Diario' para que solo se pueda reclamar una vez al día y ajustamos el evento semanal para que se reinicie correctamente cada domingo.`,
+      date: new Date()
     }
   ]);
 

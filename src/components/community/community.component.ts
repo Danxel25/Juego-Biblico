@@ -1,25 +1,22 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CommunityPost } from '../../models/community.model';
 import { CommunityService } from '../../services/community.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
-import { Announcement } from '../../models/announcement.model';
-import { AnnouncementService } from '../../services/announcement.service';
 import { SoundService } from '../../services/sound.service';
 
 @Component({
   selector: 'app-community',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './community.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommunityComponent implements OnInit {
   private communityService = inject(CommunityService);
   private authService = inject(AuthService);
-  private announcementService = inject(AnnouncementService);
   private soundService = inject(SoundService);
 
   user = this.authService.currentUser;
@@ -35,9 +32,6 @@ export class CommunityComponent implements OnInit {
   newTopicContent = signal('');
   replyingToPostId = signal<string | null>(null);
   replyContent = signal('');
-  
-  // Announcements
-  announcements = this.announcementService.announcements;
   
   // General State
   notification = signal<{ message: string; type: 'success' | 'error' } | null>(null);

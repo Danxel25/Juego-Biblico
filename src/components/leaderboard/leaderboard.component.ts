@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { LeaderboardService, LeaderboardCategory } from '../../services/leaderboard.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
@@ -7,7 +7,7 @@ import { User } from '../../models/user.model';
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DatePipe],
   templateUrl: './leaderboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

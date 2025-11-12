@@ -5,10 +5,12 @@ import { AuthService } from './auth.service';
 function getEndOfWeek(): Date {
   const now = new Date();
   const currentDay = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
-  const daysUntilSunday = currentDay === 0 ? 0 : 7 - currentDay;
+  // The week ends on Sunday. If today is Sunday (0), it's the last day.
+  const daysUntilSunday = 7 - currentDay;
   
   const endOfWeek = new Date(now);
-  endOfWeek.setDate(now.getDate() + daysUntilSunday);
+  // Add remaining days to get to next Sunday, then set time to end of day.
+  endOfWeek.setDate(now.getDate() + daysUntilSunday - (currentDay === 0 ? 7:0));
   endOfWeek.setHours(23, 59, 59, 999);
   
   return endOfWeek;

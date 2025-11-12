@@ -2,19 +2,23 @@ import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/c
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { User } from '../../models/user.model';
+import { AnnouncementService } from '../../services/announcement.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-main-menu',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './main-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainMenuComponent {
   private route = inject(ActivatedRoute);
+  private announcementService = inject(AnnouncementService);
 
   private resolvedData = toSignal(this.route.data);
   user = computed(() => (this.resolvedData()?.['user'] as User | null));
+  announcements = this.announcementService.announcements;
 
   constructor() {}
 
