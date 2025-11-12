@@ -24,8 +24,13 @@
 
         @if(activeEvent(); as event) {
            <button (click)="startGame('event')"
-                  class="px-8 py-4 w-full max-w-sm bg-amber-500 text-white font-bold text-xl rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200 active:scale-95">
-             Participar en Evento
+                  [disabled]="isEventRewardClaimed()"
+                  class="px-8 py-4 w-full max-w-sm bg-amber-500 text-white font-bold text-xl rounded-lg shadow-md hover:bg-amber-600 transition-all duration-200 active:scale-95 disabled:bg-slate-400 disabled:cursor-not-allowed">
+             @if(isEventRewardClaimed()) {
+               <span>Evento Completado</span>
+             } @else {
+               <span>Participar en Evento</span>
+             }
            </button>
         }
       </div>

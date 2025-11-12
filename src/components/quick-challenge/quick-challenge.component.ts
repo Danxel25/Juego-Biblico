@@ -58,6 +58,7 @@ export class QuickChallengeComponent implements OnDestroy {
 
   // Event related signals
   activeEvent = this.eventService.activeEvent;
+  isEventRewardClaimed = this.eventService.isRewardClaimed;
 
   currentQuestion = computed(() => this.questions()[this.currentQuestionIndex()]);
   scoreMultiplier = computed(() => 1 + Math.floor(this.consecutiveCorrect() / 3));
