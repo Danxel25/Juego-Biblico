@@ -114,12 +114,24 @@
     @case ('finished') {
       <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fade-in">
         <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-8 text-center dark:bg-gray-800">
+          
+          <!-- Score -->
+          <div class="mb-4">
+              <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Resultado Final</p>
+              <div class="my-2 text-5xl font-bold">
+                <span class="text-blue-600 dark:text-blue-400">{{ playerScore() }}</span>
+                <span class="text-slate-400 dark:text-slate-500 mx-2">-</span>
+                <span class="text-red-600 dark:text-red-400">{{ opponentScore() }}</span>
+              </div>
+          </div>
+    
+          <!-- Result Title & Opponent Card -->
           @if (winner() === 'player') {
             <h2 class="text-4xl font-bold font-cinzel text-green-600 dark:text-green-400">¡Victoria Celestial!</h2>
-            <p class="mt-4 text-slate-600 dark:text-slate-300">Has demostrado una sabiduría superior.</p>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">Has demostrado una sabiduría superior.</p>
           } @else if(winner() === 'opponent') {
             <h2 class="text-4xl font-bold font-cinzel text-red-600 dark:text-red-400">Derrota Honorable</h2>
-            <p class="mt-2 text-slate-600 dark:text-slate-300">Tu oponente fue formidable. ¡Sigue estudiando!</p>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">Tu oponente fue formidable.</p>
             @if (opponent(); as opp) {
               <a [routerLink]="['/profile', opp.uid]" class="mt-4 block p-3 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 hover:border-slate-300 transition-all duration-200 group text-left dark:bg-slate-700 dark:border-slate-600 dark:hover:bg-slate-600">
                 <div class="flex items-center gap-4">
@@ -134,13 +146,10 @@
             }
           } @else {
             <h2 class="text-4xl font-bold font-cinzel text-slate-700 dark:text-slate-200">¡Empate!</h2>
-            <p class="mt-4 text-slate-600 dark:text-slate-300">Un duelo muy reñido. ¡Ambos han demostrado su valía!</p>
+            <p class="mt-2 text-slate-600 dark:text-slate-300">Un duelo muy reñido. ¡Ambos han demostrado su valía!</p>
           }
-
-          <div class="my-6 text-3xl font-bold">
-            <span class="text-blue-600 dark:text-blue-400">{{ playerScore() }}</span> - <span class="text-red-600 dark:text-red-400">{{ opponentScore() }}</span>
-          </div>
-
+    
+          <!-- Rewards -->
           <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/40 dark:border-yellow-700">
             <h3 class="font-bold text-lg text-yellow-800 dark:text-yellow-200">Recompensas</h3>
             <div class="flex justify-center gap-8 mt-2">
@@ -154,6 +163,8 @@
               </div>
             </div>
           </div>
+           
+          <!-- Actions -->
            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
              <button (click)="goHome()" class="px-6 py-3 bg-slate-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-slate-700 transition-all">
               Menú Principal

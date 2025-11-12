@@ -86,16 +86,29 @@ Has preparado la base de datos correctamente (¡el script SQL funcionó!), pero 
     }
 
     supabase.auth.onAuthStateChange(async (event, session) => {
-      if (this.authLoadingState() === 'error') return; // Do not override manual errors
+      if (this.authLoadingState() === 'error') return;
 
       if (session?.user) {
+        // If the user session is already loaded and this is just a token refresh,
+        // we can skip re-fetching the profile to avoid a disruptive loading screen.
+        if (this.currentUser()?.uid === session.user.id && event === 'TOKEN_REFRESHED') {
+          if (!this.authInitialized()) {
+            this.authInitialized.set(true);
+          }
+          return; // Skip re-fetch
+        }
+
         this.authLoadingState.set('fetching_profile');
         await this.fetchUserProfile(session.user);
       } else {
-        this.currentUser.set(null);
-        this.presenceService.disconnect();
-        this.authLoadingState.set('idle');
+        // Only update state if there was a user before (i.e., this is a real sign-out event)
+        if (this.currentUser() !== null) {
+          this.currentUser.set(null);
+          this.presenceService.disconnect();
+          this.authLoadingState.set('idle');
+        }
       }
+      // Ensure the app is marked as initialized so routing logic can proceed.
       this.authInitialized.set(true);
     });
 

@@ -12,7 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DataService } from '../../services/data.service';
 import { PresenceService } from '../../services/presence.service';
 import { SoundService } from '../../services/sound.service';
-import { Subject, Subscription, debounceTime } from 'rxjs';
+import { Subject, debounceTime } from 'rxjs';
 
 interface DisplayAchievement extends Achievement {
   unlocked: boolean;
@@ -75,8 +75,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   searchResults = signal<User[]>([]);
   searchQuery = signal('');
   private searchSubject = new Subject<string>();
-  private presenceSubscription: Subscription | null = null;
-  onlineFriendIds = signal<Set<string>>(new Set());
+  private presenceState = toSignal(this.presenceService.presenceState$, { initialValue: {} });
+  onlineFriendIds = computed(() => new Set(Object.keys(this.presenceState())));
   
   // Computed values
   friendIds = computed(() => new Set(this.friends().map(f => f.uid)));
@@ -117,15 +117,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadFriendData();
-    this.presenceSubscription = this.presenceService.presenceState$.subscribe(state => {
-      const onlineIds = Object.keys(state);
-      this.onlineFriendIds.set(new Set(onlineIds));
-    });
   }
 
   ngOnDestroy(): void {
     this.searchSubject.unsubscribe();
-    this.presenceSubscription?.unsubscribe();
   }
   
   private showNotification(message: string, type: 'success' | 'error'): void {
