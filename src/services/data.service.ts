@@ -147,7 +147,7 @@ export class DataService {
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .ilike('customName', `%${nameQuery}%`)
+      .ilike('custom_name', `%${nameQuery}%`)
       .neq('uid', currentUserId)
       .limit(10);
       
